@@ -16,7 +16,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     try {
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-      const user = await this.prisma.user.create({
+      const user = await this.prisma.users.create({
         data: {
           ...createUserDto,
           password: hashedPassword,
@@ -35,11 +35,11 @@ export class UsersService {
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.users.findMany();
   }
 
   async findOne(userId: number) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.users.findUnique({
       where: {
         id: userId,
       },
@@ -53,7 +53,7 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.users.findUnique({
       where: {
         email: email,
       },
@@ -69,7 +69,7 @@ export class UsersService {
       if (updateUserDto.password) {
         updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
       }
-      const updatedUser = await this.prisma.user.update({
+      const updatedUser = await this.prisma.users.update({
         where: {
           id: userId,
         },
@@ -87,7 +87,7 @@ export class UsersService {
 
   async remove(userId: number) {
     try {
-      await this.prisma.user.delete({
+      await this.prisma.users.delete({
         where: {
           id: userId,
         },

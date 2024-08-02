@@ -13,7 +13,7 @@ services:
   api-users:
     image: node:20-alpine
     volumes:
-      - ./backend:/app
+      - ./backend/api-users:/app
     ports:
       - 3000:3000
     working_dir: /app
@@ -24,19 +24,22 @@ services:
   database:
     image: postgres:16-alpine
     volumes:
-      - ./database:/var/lib/postgres/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    
-  adminer:
-    image: adminer
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
     ports:
-      - 8080:8080
+      - "5050:80"
     environment:
-      - ADMINER_DEFAULT_SERVER=${ADMINER_DEFAULT_SERVER}
-      - ADMINER_DEFAULT_DB_DRIVER=${ADMINER_DEFAULT_DB_DRIVER}
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     depends_on:
       - database
-  
+
+volumes:
+  postgres_data:
