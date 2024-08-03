@@ -4,7 +4,7 @@ services:
     volumes:
       - ./frontend:/app
     ports:
-      - 5173:5173
+      - ${FRONT_END_PORT}:${FRONT_END_PORT}
     working_dir: /app
     command: npm run setup
     depends_on:
@@ -15,7 +15,7 @@ services:
     volumes:
       - ./backend/api-users:/app
     ports:
-      - 3000:3000
+      - ${API_USERS_PORT}:${API_USERS_PORT}
     working_dir: /app
     command: npm run setup
     depends_on:
@@ -34,7 +34,7 @@ services:
   adminer:
     image: adminer
     ports:
-      - 8080:8080
+      - ${ADMINER_PORT}:${ADMINER_PORT}
     environment:
       - ADMINER_DEFAULT_SERVER=${ADMINER_DEFAULT_SERVER}
       - ADMINER_DEFAULT_DB_DRIVER=${ADMINER_DEFAULT_DB_DRIVER} 
