@@ -8,33 +8,35 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { LoggingService } from 'src/common/services/logging.service';
+import { UserEntity } from './entities/user.entity';
+import { cp } from 'fs';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: LoggingService,
+  ) {
+    this.logger.setContext('UsersController');
+  }
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
       const user = await this.prisma.users.create({
-        data: {
-          ...createUserDto,
-          password: hashedPassword,
-        },
+        data: createUserDto,
       });
-      
       const { password, ...result } = user;
+      this.logger.log(`User created successfully: ${result.email}`);
       return result;
     } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException('Email already exists');
-      }
-      // Log the error here
-      throw new InternalServerErrorException('Something went wrong');
+      this.logger.error(`Error creating user: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('An error occurred while creating the user');
     }
   }
 
   findAll() {
+    console.log('findall clicked');
     return this.prisma.users.findMany();
   }
 
@@ -58,9 +60,7 @@ export class UsersService {
         email: email,
       },
     });
-    if (!user) {
-      throw new NotFoundException(`User with email ${email} not found`);
-    }
+   
     return user;
   }
 
