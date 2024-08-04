@@ -46,11 +46,7 @@ export class WeightService {
         if (!userData) {
           throw new NotFoundException(`User with id ${userId} not found`);
         }
-    
-        if (!userData.isActive) {
-          throw new BadRequestException('Cannot predict goal date for inactive user');
-        }
-    
+      
         const weightLogs = await this.getWeightHistory(userId);
         if (weightLogs.length === 0) {
           throw new BadRequestException('No weight logs found for user');

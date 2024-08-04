@@ -21,6 +21,17 @@ services:
     depends_on:
       - database
 
+  weight-service:
+    image: node:20-alpine
+    volumes:
+      - ./backend/weight-service:/app
+    ports:
+      - 3001:3001
+    working_dir: /app
+    command: npm run setup
+    depends_on:
+      - database-weight
+
   database:
     image: postgres:16-alpine
     volumes:
@@ -31,6 +42,16 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
 
+  database-weight:
+    image: postgres:16-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=weight
+
   adminer:
     image: adminer
     ports:
@@ -40,7 +61,9 @@ services:
       - ADMINER_DEFAULT_DB_DRIVER=${ADMINER_DEFAULT_DB_DRIVER} 
     depends_on:
       - database
+      - database-weight
     restart: always
 
+ 
 volumes:
   postgres_data:
