@@ -7,7 +7,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { LoggingService } from 'src/common/services/logging.service';
 import { UserEntity } from './entities/user.entity';
 import { cp } from 'fs';
@@ -22,10 +22,22 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
+    console.log('create clicked');
     try {
+      // Hash the password before creating the user
+      const saltOrRounds = 10;
+      const passwordToHash = createUserDto.password;
+      const hashedPassword = await bcrypt.hash(passwordToHash, saltOrRounds);
+  
+      // Create the user with the hashed password
       const user = await this.prisma.users.create({
-        data: createUserDto,
+        data: {
+          ...createUserDto,
+          password: hashedPassword,
+        },
       });
+  
+      // Omit the password from the returned result
       const { password, ...result } = user;
       this.logger.log(`User created successfully: ${result.email}`);
       return result;
@@ -34,6 +46,7 @@ export class UsersService {
       throw new InternalServerErrorException('An error occurred while creating the user');
     }
   }
+  
 
   findAll() {
     console.log('findall clicked');

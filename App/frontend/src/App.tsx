@@ -1,5 +1,6 @@
  
 import "./App.css";
+import UserRegistrationForm from "./components/UserRegistrationForm";
 
 function App() {
    
@@ -7,8 +8,8 @@ function App() {
   return (
     <>
       <div>
-        <h1>Welcome to Weight Tracker</h1>
-        <h5>App under construction</h5>
+        <h1>Welcome to Better Me</h1>
+        <UserRegistrationForm />
       </div>
     </>
   );
