@@ -10,8 +10,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcryptjs';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import * as jwt from 'jsonwebtoken';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import axios from 'axios';
 
 @Injectable()
@@ -19,6 +19,7 @@ export class AuthService {
   constructor(
     @Inject(UsersService) private usersService: UsersService,
     @Inject(JwtService) private jwtService: JwtService,
+    
   ) {}
 
   async signUp(registerDto: RegisterDto) {
@@ -40,8 +41,11 @@ export class AuthService {
     // Hash the password
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
+    console.log(hashedPassword)
+
     // Generate a verification token
-    const token = this.generateVerificationToken();
+    const token = this.generateVerificationToken(registerDto.email);
+
 
     // Create a user DTO with the hashed password and token
     const userDto: CreateUserDto = {
@@ -60,6 +64,7 @@ export class AuthService {
     // Create the user
     const createdUser = await this.usersService.create(userDto);
 
+  
     // Send verification email
     await axios.post(
       'http://mailing-service:3001/mailing/send-verification-email',
@@ -72,14 +77,14 @@ export class AuthService {
     return createdUser;
   }
 
-  private generateVerificationToken(): string {
-    const secretKey = process.env.JWT_SECRET_KEY; // Make sure this is set in your .env file
+  private generateVerificationToken(email: string): string {
+    const secretKey = process.env.JWT_SECRET_KEY; // Ensure this is set in your .env file
     if (!secretKey) {
       throw new Error('JWT Key not found');
     }
-    // console.log("token")
-
-    return jwt.sign({}, secretKey, { expiresIn: '1h' });
+  
+    // Include the email in the token's payload
+    return jwt.sign({ email }, secretKey, { expiresIn: '1h' });
   }
 
   async signIn(email: string, password: string) {
@@ -102,28 +107,32 @@ export class AuthService {
   async verifyEmailToken(email: string, token: string): Promise<string> {
     // Fetch the user by email
     const user = await this.usersService.findByEmail(email);
+    
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     const secretKey = process.env.JWT_SECRET_KEY;
+    
     if (!secretKey) {
       throw new Error('JWT_SECRET_KEY is not set. Please configure it in your environment variables.');
     }
-    
     // Check if the token matches
     try {
-      const decodedToken = jwt.verify(token, secretKey); // Use the secret key you used for generating the token
+      // Decode and verify the token using the secret key
+    const decodedToken = jwt.verify(token, secretKey);
 
-      // Verify that the user ID in the token matches the user's ID
-      if (typeof decodedToken !== 'string' && decodedToken.id !== user.email) {
-        throw new BadRequestException('Invalid token');
-      }
+    // Check if the decodedToken is an object and contains the expected 'id' field
+    if (typeof decodedToken !== 'object' || !decodedToken.email) {
+      throw new BadRequestException('Invalid token format');
+    }
 
-      // Check if the user is already verified
-      if (user.isVerified) {
-        return 'User is already verified';
-      }
+    // Verify that the user ID in the token matches the user's email or ID
+    if (decodedToken.email !== user.email) {
+      throw new BadRequestException('Invalid token');
+    }
+
+    console.log(decodedToken.email)
 
       // Update the user's verification status
       await this.usersService.updateUserVerificationStatus(user.id);

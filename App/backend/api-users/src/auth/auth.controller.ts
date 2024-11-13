@@ -7,6 +7,7 @@ import {
   Query,
   BadRequestException,
   NotFoundException,
+  Get,
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -33,7 +34,7 @@ export class AuthController {
     return this.authService.signIn(loginDto.email, loginDto.password);
   }
 
-  @Post('verify-email')
+  @Get('verify-email')
   async verifyEmail(
     @Query('email') email: string,
     @Query('token') token: string,
@@ -41,6 +42,7 @@ export class AuthController {
     if (!email || !token) {
       throw new BadRequestException('Email and token are required');
     }
+   
 
     try {
       const result = await this.authService.verifyEmailToken(email, token);

@@ -15,23 +15,32 @@ export class MailingService {
         user: process.env.MAIL_USERNAME, // Your SMTP user
         pass: process.env.MAIL_PASSWORD, // Your SMTP password
       },
+     
       tls: {
-        rejectUnauthorized: false,       // Bypass SSL certificate verification
+        rejectUnauthorized: false,
       },
     });
     
   }
 
   async sendVerificationEmail(email: string, token: string): Promise<void> {
-    const verificationUrl = `http://localhost:3000/verify-email?email=${email}&token=${token}`;
+    const verificationUrl = `http://localhost:3000/auth/verify-email?email=${email}&token=${token}`;
 
     const mailOptions = {
       from: '"Better Me" <betterme@jmdwebdev.com>',
-      to: email,
+      to:email,
       subject: 'Vérification Email',
       html: `<p>Merci de cliquer sur le lien <a href="${verificationUrl}">suivant</a> pour vérifer votre Email .</p>`,
     };
-    console.log(this.transporter);
+   
+  //   this.transporter.verify(function (error, success) {
+  //   if (error) {
+  //     console.error('SMTP connection error:', error);
+  //   } else {
+  //     console.log('SMTP server is ready to take messages', success);
+  //   }
+  //  })
+
     await this.transporter.sendMail(mailOptions);
   }
 
