@@ -97,11 +97,14 @@ export class AuthService {
     if (!ismatch) {
       throw new UnauthorizedException({ message: 'Invalid Password' });
     }
-
+    const secretKey = process.env.JWT_SECRET_KEY;
     const payload = { id: user.id, email: user.email };
+
     return {
-      tokenAccess: await this.jwtService.signAsync(payload),
+      tokenAccess: await this.jwtService.signAsync(payload, {secret: secretKey}), 
     };
+
+   
   }
 
   async verifyEmailToken(email: string, token: string): Promise<string> {
@@ -132,9 +135,7 @@ export class AuthService {
       throw new BadRequestException('Invalid token');
     }
 
-    console.log(decodedToken.email)
-
-      // Update the user's verification status
+         // Update the user's verification status
       await this.usersService.updateUserVerificationStatus(user.id);
       return 'Email verification successful';
     } catch (error) {
