@@ -24,7 +24,7 @@ export class UsersController {
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: 'The user has been successfully created.', type: CreateUserDto })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @UsePipes(new ValidationPipe({ transform: true }))
+///  @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }

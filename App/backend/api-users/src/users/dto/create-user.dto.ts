@@ -53,4 +53,7 @@ export class CreateUserDto {
   @ApiProperty({ example: 75, description: 'weight goal of the user' })
   @IsNumber()
   weightGoal: number;
+
+  @IsString()
+  token: string
 }

@@ -11,4 +11,6 @@ export class UserEntity implements Users{
     active: number;
     bloodPressure: string | null;
     weightGoal: number;
+    isVerified: boolean;
+    token: string;
 }

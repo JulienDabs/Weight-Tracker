@@ -21,6 +21,17 @@ services:
     depends_on:
       - database
 
+  mailing-service:
+    image: node:20-alpine
+    volumes:
+      - ./backend/mailing-service:/app
+    ports:
+      - 3001:3001
+    working_dir: /app
+    command: npm run setup
+    depends_on:
+      - database
+
   database:
     image: postgres:16-alpine
     volumes:

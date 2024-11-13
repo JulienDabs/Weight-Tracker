@@ -75,4 +75,7 @@ export class RegisterDto {
   @ApiProperty({ example: 75, description: 'weight goal of the user' })
   @IsNumber()
   weightGoal: number;
+
+  
+  token: string;
 }

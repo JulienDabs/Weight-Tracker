@@ -8,10 +8,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 generator client {
   provider = "prisma-client-js"
 }
-
 
 model Users {
   id            Int     @id @default(autoincrement())
@@ -24,4 +24,6 @@ model Users {
   active        Int
   bloodPressure String?
   weightGoal    Float
+  isVerified    Boolean @default(false)
+  token         String?
 }
