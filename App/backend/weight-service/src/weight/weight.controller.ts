@@ -13,7 +13,7 @@ export class WeightController {
   @ApiBody({ type: CreateWeightDto })
   @ApiResponse({ status: 201, description: 'The Weight has been successfully created.', type: CreateWeightDto })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @UsePipes(new ValidationPipe({ transform: true }))
+ // @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createWeightDto: CreateWeightDto) {
     return this.weightService.create(createWeightDto);
   }
