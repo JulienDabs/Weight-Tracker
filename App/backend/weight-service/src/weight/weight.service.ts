@@ -1,11 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateWeightDto } from './dto/create-weight.dto';
 import { UpdateWeightDto } from './dto/update-weight.dto';
+import { PrismaService } from 'src/prisma.service';
+import { LoggingService } from 'src/common/services/logging.service';
+
 
 @Injectable()
 export class WeightService {
-  create(createWeightDto: CreateWeightDto) {
-    return 'This action adds a new weight';
+
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: LoggingService,
+  ) {
+    this.logger.setContext('UsersController');
+  }
+
+  async create(createWeightDto: CreateWeightDto) {
+    try {
+      const weight = await this.prisma.weight.create({
+        data: {
+          ...createWeightDto,
+        }
+      });
+      return weight
+    } catch (error){
+      this.logger.error(`Error creating log: ${error.message}`, error.stack);
+      throw new InternalServerErrorException(
+        'Error creating log'
+      )
+    }
   }
 
   findAll() {
