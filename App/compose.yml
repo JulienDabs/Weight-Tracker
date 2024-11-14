@@ -20,6 +20,7 @@ services:
     command: npm run setup
     depends_on:
       - database
+      - database_wt
 
   mailing-service:
     image: node:20-alpine
@@ -31,9 +32,24 @@ services:
     command: npm run setup
     depends_on:
       - database
+      - database_wt
+  
+  weight-service:
+    image: node:20-alpine
+    volumes:
+      - ./backend/weight-service:/app
+    ports:
+      - 3002:3002
+    working_dir: /app
+    command: npm run setup
+    depends_on:
+      - database
+      - database_wt
 
   database:
     image: postgres:16-alpine
+    ports:
+      - "5432:5432"
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
@@ -41,6 +57,18 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+  
+  database_wt:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./initWt.sql:/docker-entrypoint-initdb.d/initWt.sql
+      - postgres_data_wt:/var/lib/postgresql/data_wt
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_WT}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_WT}
+      - POSTGRES_DB=${POSTGRES_DB_WT}
 
   adminer:
     image: adminer
@@ -51,7 +79,9 @@ services:
       - ADMINER_DEFAULT_DB_DRIVER=${ADMINER_DEFAULT_DB_DRIVER} 
     depends_on:
       - database
+      - database_wt
     restart: always
 
 volumes:
   postgres_data:
+  postgres_data_wt:
