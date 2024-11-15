@@ -36,6 +36,13 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('/height/:id')
+  @ApiOperation({ summary: 'Get height from user'})
+  @ApiResponse({ status: 200, description: 'return height from an user', type: CreateUserDto })
+  getHeightFromUser(@Param('id') id: string){
+    return this.usersService.findOne(+id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a user by id' })
   @ApiParam({ name: 'id', type: 'number' })

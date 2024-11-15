@@ -1,4 +1,4 @@
-import { Users } from '@prisma/client';
+import { $Enums, Users } from '@prisma/client';
 
 export class UserEntity implements Users{
     id: number;
@@ -13,4 +13,5 @@ export class UserEntity implements Users{
     weightGoal: number;
     isVerified: boolean;
     token: string;
+    gender: $Enums.Gender;
 }

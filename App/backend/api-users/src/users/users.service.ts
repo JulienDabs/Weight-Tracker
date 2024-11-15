@@ -129,5 +129,23 @@ export class UsersService {
     }
   }
 
+  async getHeightFromUser(userId: number): Promise<number> {
+    try {
+      const user = await this.prisma.users.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+  
+      // Return the user's height if found, or a default value (e.g., 0) if no height is provided
+      return user && user.height ? user.height : 0;
+    } catch (error) {
+      console.error('Error fetching user height:', error);
+      // Return a default height value in case of an error
+      return 0;
+    }
+  }
+  
+
   
 }

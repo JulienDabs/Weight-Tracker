@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNumber, IsString, Max, Min } from 'class-validator';
+import { Gender } from '@prisma/client';
+import { IsEmail, IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'John', description: 'firstname of the user' })
@@ -23,7 +24,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     example: 95.5,
-    description: 'Current weight in kg of the user ',
+    description: 'Current weight in kg of the user',
   })
   @IsNumber()
   currentWeight: number;
@@ -40,10 +41,11 @@ export class CreateUserDto {
   })
   @Min(1)
   @Max(3)
+  @IsNumber()
   active: number;
 
   @ApiProperty({
-    example: '120/8',
+    example: '120/80',
     description: 'blood pressure of the user',
     required: false,
   })
@@ -54,6 +56,14 @@ export class CreateUserDto {
   @IsNumber()
   weightGoal: number;
 
+  @ApiProperty({
+    example: 'some-random-token',
+    description: 'Verification token',
+  })
   @IsString()
-  token: string
+  token: string;
+
+   @ApiProperty({ example: 'MALE', description: 'Sex of the user' })
+   @IsEnum(Gender)
+   gender : Gender
 }
