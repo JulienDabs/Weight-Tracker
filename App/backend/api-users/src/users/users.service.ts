@@ -94,6 +94,25 @@ export class UsersService {
     }
   }
 
+  async bmiUpdate(userId: number, bmi: number) {
+    try {
+      const updateBmi = await this.prisma.users.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          bmi: bmi,
+        },
+      });
+     
+      return updateBmi;
+    } catch (error) {
+      console.error('Error updating BMI:', error.message);
+      throw new Error(`Failed to update BMI: ${error.message}`);
+    }
+  }
+  
+  
   async remove(userId: number) {
     try {
       await this.prisma.users.delete({

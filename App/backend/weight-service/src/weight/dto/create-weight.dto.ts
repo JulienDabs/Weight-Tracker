@@ -26,11 +26,7 @@ export class CreateWeightDto {
   @IsNumber()
   heartRate?: number;
 
-  @ApiProperty({ description: 'Body Mass Index (BMI)', required: false })
-  @IsOptional()
-  @IsNumber()
-  bmi?: number;
-
+ 
   @ApiProperty({ description: 'Waist measurement in centimeters or inches', required: false })
   @IsOptional()
   @IsNumber()

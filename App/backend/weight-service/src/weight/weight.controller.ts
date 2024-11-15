@@ -27,7 +27,7 @@ export class WeightController {
     type: CreateWeightDto,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-   @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createWeightDto: CreateWeightDto) {
     return this.weightService.create(createWeightDto);
   }
@@ -57,6 +57,30 @@ export class WeightController {
   findOne(@Param('id') id: string) {
     return this.weightService.findOne(id);
   }
+  @Get('bmi/:weight/:height')
+  @ApiOperation({ summary: 'Calculate BMI based on weight and height' })
+  @ApiParam({
+    name: 'weight',
+    description: 'The weight of the user in kilograms',
+    type: Number,
+  })
+  @ApiParam({
+    name: 'height',
+    description: 'The height of the user in centimeters',
+    type: Number,
+  })
+  getBMI(@Param('weight') weight: string, @Param('height') height: string): number {
+    const weightNum = parseFloat(weight);
+    const heightNum = parseFloat(height);
+
+    if (isNaN(weightNum) || isNaN(heightNum)) {
+      throw new Error('Invalid input. Weight and height must be numbers.');
+    }
+
+    return this.weightService.calculateBMI(weightNum, heightNum);
+  }
+  
+
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a Weight' })

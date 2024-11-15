@@ -7,7 +7,6 @@ export class WeightEntity implements Weight {
   userId: string;
   bloodPressure: string | null; // Optional, can be null
   heartRate: number | null;     // Optional, can be null
-  bmi: number | null;           // Optional, can be null
   waist: number | null;         // Optional, can be null
   hip: number | null;           // Optional, can be null
   chest: number | null;         // Optional, can be null

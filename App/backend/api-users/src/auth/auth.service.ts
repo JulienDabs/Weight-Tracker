@@ -20,7 +20,6 @@ export class AuthService {
   constructor(
     @Inject(UsersService) private usersService: UsersService,
     @Inject(JwtService) private jwtService: JwtService,
-    
   ) {}
 
   async signUp(registerDto: RegisterDto) {
@@ -42,11 +41,17 @@ export class AuthService {
     // Hash the password
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    console.log(hashedPassword)
+    console.log(hashedPassword);
 
     // Generate a verification token
     const token = this.generateVerificationToken(registerDto.email);
 
+    //get bmi from weight service
+    const response = await axios.get(
+      `http://weight-service:3003/weight/bmi/${registerDto.currentWeight}/${registerDto.height}`,
+    );
+
+    const bmi = response.data;
 
     // Create a user DTO with the hashed password and token
     const userDto: CreateUserDto = {
@@ -59,14 +64,16 @@ export class AuthService {
       active: registerDto.active,
       bloodPressure: registerDto.bloodPressure,
       weightGoal: registerDto.weightGoal,
-      token: token,
+
       gender: registerDto.gender as Gender,
+
+      birthday: registerDto.birthday,
+      bmi: bmi,
     };
 
     // Create the user
     const createdUser = await this.usersService.create(userDto);
 
-  
     // Send verification email
     await axios.post(
       'http://mailing-service:3001/mailing/send-verification-email',
@@ -84,7 +91,7 @@ export class AuthService {
     if (!secretKey) {
       throw new Error('JWT Key not found');
     }
-  
+
     // Include the email in the token's payload
     return jwt.sign({ email }, secretKey, { expiresIn: '1h' });
   }
@@ -103,46 +110,47 @@ export class AuthService {
     const payload = { id: user.id, email: user.email };
 
     return {
-      tokenAccess: await this.jwtService.signAsync(payload, {secret: secretKey}), 
+      tokenAccess: await this.jwtService.signAsync(payload, {
+        secret: secretKey,
+      }),
     };
-
-   
   }
 
   async verifyEmailToken(email: string, token: string): Promise<string> {
     // Fetch the user by email
     const user = await this.usersService.findByEmail(email);
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     const secretKey = process.env.JWT_SECRET_KEY;
-    
+
     if (!secretKey) {
-      throw new Error('JWT_SECRET_KEY is not set. Please configure it in your environment variables.');
+      throw new Error(
+        'JWT_SECRET_KEY is not set. Please configure it in your environment variables.',
+      );
     }
     // Check if the token matches
     try {
       // Decode and verify the token using the secret key
-    const decodedToken = jwt.verify(token, secretKey);
+      const decodedToken = jwt.verify(token, secretKey);
 
-    // Check if the decodedToken is an object and contains the expected 'id' field
-    if (typeof decodedToken !== 'object' || !decodedToken.email) {
-      throw new BadRequestException('Invalid token format');
-    }
+      // Check if the decodedToken is an object and contains the expected 'id' field
+      if (typeof decodedToken !== 'object' || !decodedToken.email) {
+        throw new BadRequestException('Invalid token format');
+      }
 
-    // Verify that the user ID in the token matches the user's email or ID
-    if (decodedToken.email !== user.email) {
-      throw new BadRequestException('Invalid token');
-    }
+      // Verify that the user ID in the token matches the user's email or ID
+      if (decodedToken.email !== user.email) {
+        throw new BadRequestException('Invalid token');
+      }
 
-         // Update the user's verification status
+      // Update the user's verification status
       await this.usersService.updateUserVerificationStatus(user.id);
       return 'Email verification successful';
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');
     }
   }
-
 }

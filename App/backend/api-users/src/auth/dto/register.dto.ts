@@ -7,6 +7,9 @@ import {
   IsNumber,
   Min,
   Max,
+  IsDate,
+  IsEnum,
+  IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '@prisma/client';
@@ -78,7 +81,22 @@ export class RegisterDto {
   weightGoal: number;
 
   
-  token: string;
+  @ApiProperty({ enum: Gender, description: 'Gender of the user' })
+  @IsEnum(Gender)
+  gender: Gender;
 
-  gender: Gender
+  @ApiProperty({
+    example: '1990-05-15',
+    description: 'Birthdate of the user',
+  })
+  
+  birthday: Date;
+
+  @ApiProperty({
+    example: 22.5,
+    description: 'The BMI (Body Mass Index) of the user',
+  })
+  
+  @IsOptional()
+  bmi: number;
 }

@@ -13,7 +13,6 @@ model Weight {
   weight        Float
   userId        String
   bloodPressure String?
-  bmi           Float?
   chest         Float?
   heartRate     Int?
   hip           Float?

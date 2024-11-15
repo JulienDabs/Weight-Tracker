@@ -36,11 +36,15 @@ export class WeightService {
       // Calculate BMI
       const bmi = this.calculateBMI(createWeightDto.weight, height);
 
+      await axios.post(`http://api-users:3000/users/bmi`, {
+        id: createWeightDto.userId,
+        bmi,
+      });
+
       // Create weight entry with the calculated BMI
       const weight = await this.prisma.weight.create({
         data: {
           ...createWeightDto,
-          bmi, // Include the BMI in the data
         },
       });
 

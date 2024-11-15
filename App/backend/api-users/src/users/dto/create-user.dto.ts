@@ -1,6 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '@prisma/client';
-import { IsEmail, IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
+import {
+  IsDate,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'John', description: 'firstname of the user' })
@@ -60,10 +69,22 @@ export class CreateUserDto {
     example: 'some-random-token',
     description: 'Verification token',
   })
-  @IsString()
-  token: string;
+  
+  @ApiProperty({ example: 'MALE', description: 'Sex of the user' })
+  @IsEnum(Gender)
+  gender: Gender;
 
-   @ApiProperty({ example: 'MALE', description: 'Sex of the user' })
-   @IsEnum(Gender)
-   gender: Gender
+  @ApiProperty({
+    example: '1990-05-15',
+    description: 'Birthdate of the user',
+  })
+  @IsDate()
+  birthday: Date;
+
+  @ApiProperty({
+    example: 22.5,
+    description: 'The BMI (Body Mass Index) of the user',
+  })
+  @IsOptional()
+  bmi: number;
 }
