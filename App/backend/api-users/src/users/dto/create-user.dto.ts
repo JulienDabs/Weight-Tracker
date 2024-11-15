@@ -65,5 +65,5 @@ export class CreateUserDto {
 
    @ApiProperty({ example: 'MALE', description: 'Sex of the user' })
    @IsEnum(Gender)
-   gender : Gender
+   gender: Gender
 }

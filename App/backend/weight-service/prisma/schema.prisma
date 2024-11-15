@@ -11,13 +11,12 @@ model Weight {
   id            String   @id @default(uuid()) @db.Uuid
   date          DateTime
   weight        Float
-  bloodPressure String?  // Format: "120/80" (systolic/diastolic)
-  heartRate     Int?     // Heart rate in beats per minute (optional)
-  bmi           Float?   // Body Mass Index (optional)
-  waist         Float?   // Waist measurement in centimeters or inches
-  hip           Float?   // Hip measurement in centimeters or inches
-  chest         Float?   // Chest measurement in centimeters or inches
-  thigh         Float?   // Thigh measurement in centimeters or inches
   userId        String
+  bloodPressure String?
+  bmi           Float?
+  chest         Float?
+  heartRate     Int?
+  hip           Float?
+  thigh         Float?
+  waist         Float?
 }
-

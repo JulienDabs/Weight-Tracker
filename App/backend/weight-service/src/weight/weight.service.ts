@@ -22,8 +22,12 @@ export class WeightService {
   async create(createWeightDto: CreateWeightDto) {
     try {
       // Make an Axios request to get the height
-      const response = await axios.get(`http://localhost:3000/users/height/${createWeightDto.userId}`);
+      const response = await axios.get(
+        `http://api-users:3000/users/height/${createWeightDto.userId}`,
+      );
+
       const height = response.data.height;
+      console.log(height);
 
       if (!height || height <= 0) {
         throw new Error('Invalid height value received from the API.');
@@ -42,11 +46,17 @@ export class WeightService {
 
       return weight;
     } catch (error) {
-      this.logger.error(`Error creating weight: ${error.message}`, error.stack);
+      if (axios.isAxiosError(error)) {
+        this.logger.error(`Axios error: ${error.message}`, error.stack);
+      } else {
+        this.logger.error(
+          `Error creating weight: ${error.message}`,
+          error.stack,
+        );
+      }
       throw new InternalServerErrorException('Error creating weight');
     }
   }
-
 
   // Method to fetch weights for a specific user
   async findAllByUserId(userid: number) {
@@ -169,12 +179,15 @@ export class WeightService {
     }
   }
 
-    // Function to calculate BMI
+  // Function to calculate BMI
   calculateBMI(weight: number, height: number): number {
     if (height <= 0) {
       throw new Error('Height must be greater than zero.');
     }
-    const bmi = weight / (height * height);
+
+    const heightInMeters = height / 100;
+    const bmi = weight / (heightInMeters * heightInMeters);
+
     return parseFloat(bmi.toFixed(2)); // Round to two decimal places
   }
 }

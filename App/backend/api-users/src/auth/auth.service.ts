@@ -13,6 +13,7 @@ import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import axios from 'axios';
+import { Gender } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -58,7 +59,8 @@ export class AuthService {
       active: registerDto.active,
       bloodPressure: registerDto.bloodPressure,
       weightGoal: registerDto.weightGoal,
-      token: token, // Add the generated token here
+      token: token,
+      gender: registerDto.gender as Gender,
     };
 
     // Create the user
