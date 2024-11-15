@@ -23,20 +23,17 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    
     try {
       const user = await this.prisma.users.create({
         data: {
           ...createUserDto,
-         
+
           isVerified: false,
         },
-       
-      }); 
+      });
 
-     
       // Omit the password from the returned result
-      const {...result } = user;
+      const { ...result } = user;
       this.logger.log(`User created successfully: ${result.email}`);
       return result;
     } catch (error) {
@@ -120,32 +117,11 @@ export class UsersService {
           id: userId,
         },
         data: {
-          isVerified:true
-        }
+          isVerified: true,
+        },
       });
-      
     } catch (error) {
       throw new Error('Failed to update user verification status');
     }
   }
-
-  async getHeightFromUser(userId: number): Promise<number> {
-    try {
-      const user = await this.prisma.users.findUnique({
-        where: {
-          id: userId,
-        },
-      });
-  
-      // Return the user's height if found, or a default value (e.g., 0) if no height is provided
-      return user && user.height ? user.height : 0;
-    } catch (error) {
-      console.error('Error fetching user height:', error);
-      // Return a default height value in case of an error
-      return 0;
-    }
-  }
-  
-
-  
 }

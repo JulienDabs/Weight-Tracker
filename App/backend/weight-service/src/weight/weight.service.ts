@@ -23,7 +23,7 @@ export class WeightService {
     try {
       // Make an Axios request to get the height
       const response = await axios.get(
-        `http://api-users:3000/users/height/${createWeightDto.userId}`,
+        `http://api-users:3000/users/${createWeightDto.userId}`,
       );
 
       const height = response.data.height;
