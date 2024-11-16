@@ -13,7 +13,6 @@ import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import axios from 'axios';
-import { Gender } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -41,34 +40,13 @@ export class AuthService {
     // Hash the password
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    console.log(hashedPassword);
-
     // Generate a verification token
     const token = this.generateVerificationToken(registerDto.email);
-
-    //get bmi from weight service
-    const response = await axios.get(
-      `http://weight-service:3003/weight/bmi/${registerDto.currentWeight}/${registerDto.height}`,
-    );
-
-    const bmi = response.data;
 
     // Create a user DTO with the hashed password and token
     const userDto: CreateUserDto = {
       email: registerDto.email,
       password: hashedPassword,
-      firstname: registerDto.firstname,
-      lastname: registerDto.lastname,
-      currentWeight: registerDto.currentWeight,
-      height: registerDto.height,
-      active: registerDto.active,
-      bloodPressure: registerDto.bloodPressure,
-      weightGoal: registerDto.weightGoal,
-
-      gender: registerDto.gender as Gender,
-
-      birthday: registerDto.birthday,
-      bmi: bmi,
     };
 
     // Create the user

@@ -9,11 +9,12 @@ export class UserEntity implements Users{
     password: string;
     currentWeight: number;
     height: number;
-    active: number;
+    currentActive: number;
     bloodPressure: string | null;
     weightGoal: number;
     isVerified: boolean;
     token: string;
     gender: $Enums.Gender;
-    bmi: number ;
+    currentBmi: number ;
+    currentWeeksToReachGoal: number;
 }

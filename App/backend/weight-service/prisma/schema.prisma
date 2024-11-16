@@ -18,4 +18,7 @@ model Weight {
   hip           Float?
   thigh         Float?
   waist         Float?
+  active        Int?
+  bmi           Float
+  weeksToReachGoal Int
 }

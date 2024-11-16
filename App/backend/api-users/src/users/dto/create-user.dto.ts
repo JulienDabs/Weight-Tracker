@@ -14,11 +14,11 @@ import {
 export class CreateUserDto {
   @ApiProperty({ example: 'John', description: 'firstname of the user' })
   @IsString()
-  firstname: string;
+  firstname?: string;
 
   @ApiProperty({ example: 'Wayne', description: 'lastname of the user' })
   @IsString()
-  lastname: string;
+  lastname?: string;
 
   @ApiProperty({
     example: 'john.wayne@example.com',
@@ -36,11 +36,11 @@ export class CreateUserDto {
     description: 'Current weight in kg of the user',
   })
   @IsNumber()
-  currentWeight: number;
+  currentWeight?: number;
 
   @ApiProperty({ example: 180, description: 'height in cm of the user' })
   @IsNumber()
-  height: number;
+  height?: number;
 
   @ApiProperty({
     example: 2,
@@ -51,7 +51,7 @@ export class CreateUserDto {
   @Min(1)
   @Max(3)
   @IsNumber()
-  active: number;
+  currentActive?: number;
 
   @ApiProperty({
     example: '120/80',
@@ -63,28 +63,26 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 75, description: 'weight goal of the user' })
   @IsNumber()
-  weightGoal: number;
+  weightGoal?: number;
 
-  @ApiProperty({
-    example: 'some-random-token',
-    description: 'Verification token',
-  })
-  
   @ApiProperty({ example: 'MALE', description: 'Sex of the user' })
   @IsEnum(Gender)
-  gender: Gender;
+  gender?: Gender;
 
   @ApiProperty({
     example: '1990-05-15',
     description: 'Birthdate of the user',
   })
   @IsDate()
-  birthday: Date;
+  birthday?: Date;
 
   @ApiProperty({
     example: 22.5,
     description: 'The BMI (Body Mass Index) of the user',
   })
   @IsOptional()
-  bmi: number;
+  currentBmi?: number;
+
+  @IsOptional()
+  currentWeeksToReachGoal?: number;
 }

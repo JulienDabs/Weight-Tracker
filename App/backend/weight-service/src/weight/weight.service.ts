@@ -7,6 +7,7 @@ import { CreateWeightDto } from './dto/create-weight.dto';
 import { UpdateWeightDto } from './dto/update-weight.dto';
 import { PrismaService } from 'src/prisma.service';
 import { LoggingService } from 'src/weight/common/services/logging.service';
+import { predictWeeksToGoal } from 'src/weight/utils/weight.predictions';
 import axios from 'axios';
 
 @Injectable()
@@ -27,14 +28,32 @@ export class WeightService {
       );
 
       const height = response.data.height;
-      console.log(height);
 
       if (!height || height <= 0) {
         throw new Error('Invalid height value received from the API.');
       }
 
+      //get prediction
+      const weeks = predictWeeksToGoal({
+        currentWeight: createWeightDto.weight,
+        targetWeight: response.data.weightGoal,
+        gender: response.data.gender,
+        birthday: response.data.birthday,
+        activityLevel: createWeightDto.active,
+        height: height,
+        bloodPressure: response.data.bloodPressure,
+      });
+      // Check if `weeks` is a number before assigning
+      if (typeof weeks === 'number') {
+        createWeightDto.weeksToReachGoal = weeks;
+      } else {
+        // Handle the error case where `weeks` is a string
+        throw new Error(weeks);
+      }
       // Calculate BMI
       const bmi = this.calculateBMI(createWeightDto.weight, height);
+
+      createWeightDto.bmi = bmi;
 
       await axios.post(`http://api-users:3000/users/bmi`, {
         id: createWeightDto.userId,
@@ -48,6 +67,7 @@ export class WeightService {
         },
       });
 
+      console.log('weeks to reach goal:' + weeks);
       return weight;
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -78,6 +78,14 @@ export class UsersService {
       if (updateUserDto.password) {
         updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
       }
+
+      //get bmi from weight service
+      const response = await axios.get(
+        `http://weight-service:3003/weight/bmi/${updateUserDto.currentWeight}/${updateUserDto.height}`,
+      );
+
+      updateUserDto.currentBmi = response.data;
+
       const updatedUser = await this.prisma.users.update({
         where: {
           id: userId,
@@ -101,18 +109,17 @@ export class UsersService {
           id: userId,
         },
         data: {
-          bmi: bmi,
+          currentBmi: bmi,
         },
       });
-     
+
       return updateBmi;
     } catch (error) {
       console.error('Error updating BMI:', error.message);
       throw new Error(`Failed to update BMI: ${error.message}`);
     }
   }
-  
-  
+
   async remove(userId: number) {
     try {
       await this.prisma.users.delete({

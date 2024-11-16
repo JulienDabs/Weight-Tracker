@@ -5,6 +5,9 @@ export class WeightEntity implements Weight {
   date: Date;
   weight: number;
   userId: string;
+  bmi: number;
+  weeksToReachGoal: number;
+  active: number | null;
   bloodPressure: string | null; // Optional, can be null
   heartRate: number | null;     // Optional, can be null
   waist: number | null;         // Optional, can be null
