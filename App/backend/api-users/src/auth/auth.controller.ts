@@ -13,6 +13,7 @@ import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { RenewPasswordDto } from './dto/RenewPassword.dto';
 
 @Controller('auth')
 @ApiTags('Authentification')
@@ -53,5 +54,26 @@ export class AuthController {
       }
       throw new BadRequestException('Invalid or expired token');
     }
+  }
+
+  @Post('forgot-password')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiResponse({ status: 200, description: 'Password reset email sent' })
+  @ApiForbiddenResponse({ description: 'Invalid Email' })
+  async forgotPassword(@Body() forgotPasswordDto: RenewPasswordDto) {
+    await this.authService.forgotPassword(forgotPasswordDto.email);
+    return { message: 'Password reset email sent' };
+  }
+
+  @Post('reset-password')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiResponse({ status: 200, description: 'Password reset successful' })
+  @ApiForbiddenResponse({ description: 'Invalid token or email' })
+  async resetPassword(@Body() resetPasswordDto: RenewPasswordDto) {
+    await this.authService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.password,
+    );
+    return { message: 'Password reset successful' };
   }
 }

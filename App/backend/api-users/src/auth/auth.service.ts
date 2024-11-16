@@ -131,4 +131,61 @@ export class AuthService {
       throw new BadRequestException('Invalid or expired token');
     }
   }
+
+  async forgotPassword(email: string) {
+    // Validate email format
+    if (
+      !email.match(/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/i)
+    ) {
+      throw new BadRequestException('Invalid email format');
+    }
+
+    // Check if user exists
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Generate reset token
+    const token = this.generateVerificationToken(email);
+
+    // Send reset email
+    await axios.post(
+      'http://mailing-service:3001/mailing/send-reset-password-email',
+      {
+        email: user.email,
+        token,
+      },
+    );
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const secretKey = process.env.JWT_SECRET_KEY;
+    if (!secretKey) {
+      throw new Error('JWT Key not found');
+    }
+
+    try {
+      const decodedToken = jwt.verify(token, secretKey);
+      if (typeof decodedToken !== 'object' || !decodedToken.email) {
+        throw new BadRequestException('Invalid token format');
+      }
+
+      const email = decodedToken.email;
+
+      // Find user
+      const user = await this.usersService.findByEmail(email);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update user's password
+      await this.usersService.updatePassword(user.id, hashedPassword);
+    } catch (error) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+  }
 }

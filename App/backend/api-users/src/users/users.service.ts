@@ -102,7 +102,7 @@ export class UsersService {
     }
   }
 
-  async bmiUpdate(userId: number, bmi: number) {
+  async bmiUpdate(userId: number, bmi: number, weeks: number) {
     try {
       const updateBmi = await this.prisma.users.update({
         where: {
@@ -110,6 +110,7 @@ export class UsersService {
         },
         data: {
           currentBmi: bmi,
+          currentWeeksToReachGoal: weeks,
         },
       });
 
@@ -149,5 +150,12 @@ export class UsersService {
     } catch (error) {
       throw new Error('Failed to update user verification status');
     }
+  }
+
+  async updatePassword(userId: number, newPassword: string) {
+    await this.prisma.users.update({
+      where: { id: userId },
+      data: { password: newPassword },
+    })
   }
 }

@@ -11,4 +11,10 @@ export class MailingController {
     await this.mailingService.sendVerificationEmail(body.email, body.token);
     return { message: 'Verification email sent successfully' };
   }
+
+  @Post('send-reset-password-email')
+  async sendResetPasswordToken(@Body() body: { email: string; token: string }) {
+    await this.mailingService.sendResetPasswordToken(body.email, body.token);
+    return { message: 'Reset Password email sent successfully'}
+  }
 }

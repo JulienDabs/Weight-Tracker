@@ -52,6 +52,34 @@ export class MailingService {
     await this.transporter.sendMail(mailOptions);
   }
 
+  async sendResetPasswordToken(email: string, token: string): Promise<void> {
+    const resetUrl = `http://localhost:3000/auth/reset-password?token=${token}`;
+  
+    const mailOptions = {
+      from: '"Better Me" <nepasrepondre@betterme.com>',
+      to: email,
+      subject: 'Réinitialisation de votre mot de passe',
+      html: `
+          <div style="font-family: 'Roboto', Arial, sans-serif; line-height: 1.5; color: #696969; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #E1E4E8; border-radius: 8px;">
+              <div style="text-align: center;">
+                  <img src="../../assets/img/logo-png.png" alt="Better Me Logo" style="max-width: 150px; margin-bottom: 20px;">
+              </div>
+              <h2 style="color: #5ab5e5;">Réinitialisation de votre mot de passe</h2>
+              <p>Bonjour,</p>
+              <p>Vous avez demandé la réinitialisation de votre mot de passe pour votre compte <strong>Better Me</strong>. Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>
+              <p style="text-align: center; margin: 20px 0;">
+                  <a href="${resetUrl}" style="background-color: #5ab5e5; color: #FFFFFF; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Réinitialiser mon mot de passe</a>
+              </p>
+              <p>Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.</p>
+              <p>Merci,</p>
+              <p>L'équipe <strong>Better Me</strong></p>
+          </div>
+      `,
+    };
+  
+    await this.transporter.sendMail(mailOptions);
+  }
+
   async sendWeightReminderEmail(email: string): Promise<void> {
     const mailOptions = {
         from: '"Better Me" <betterme@jmdwebdev.com>',

@@ -9,6 +9,7 @@ import { PrismaService } from 'src/prisma.service';
 import { LoggingService } from 'src/weight/common/services/logging.service';
 import { predictWeeksToGoal } from 'src/weight/utils/weight.predictions';
 import axios from 'axios';
+import { checkWeightGoalFeasibility } from './utils/weight.safety';
 
 @Injectable()
 export class WeightService {
@@ -32,32 +33,46 @@ export class WeightService {
       if (!height || height <= 0) {
         throw new Error('Invalid height value received from the API.');
       }
-
-      //get prediction
-      const weeks = predictWeeksToGoal({
-        currentWeight: createWeightDto.weight,
-        targetWeight: response.data.weightGoal,
-        gender: response.data.gender,
-        birthday: response.data.birthday,
-        activityLevel: createWeightDto.active,
-        height: height,
-        bloodPressure: response.data.bloodPressure,
-      });
-      // Check if `weeks` is a number before assigning
-      if (typeof weeks === 'number') {
-        createWeightDto.weeksToReachGoal = weeks;
-      } else {
-        // Handle the error case where `weeks` is a string
-        throw new Error(weeks);
-      }
       // Calculate BMI
       const bmi = this.calculateBMI(createWeightDto.weight, height);
 
       createWeightDto.bmi = bmi;
 
+      const projectedBmi = checkWeightGoalFeasibility(
+        createWeightDto.weight,
+        response.data.weightGoal,
+        height,
+        response.data.birthday,
+      );
+
+      let weeks: number;
+      if (projectedBmi) {
+        // Get prediction
+        const predictedWeeks = predictWeeksToGoal({
+          currentWeight: createWeightDto.weight,
+          targetWeight: response.data.weightGoal,
+          gender: response.data.gender,
+          birthday: response.data.birthday,
+          activityLevel: createWeightDto.active,
+          height: height,
+          bloodPressure: response.data.bloodPressure,
+        });
+
+        if (typeof predictedWeeks === 'number') {
+          weeks = predictedWeeks;
+        } else {
+          throw new Error('Invalid weeks value returned from prediction.');
+        }
+      } else {
+        throw new Error('Votre objectif de poids est trop bas.');
+      }
+
+      createWeightDto.weeksToReachGoal = weeks;
+
       await axios.post(`http://api-users:3000/users/bmi`, {
         id: createWeightDto.userId,
         bmi,
+        weeks,
       });
 
       // Create weight entry with the calculated BMI
