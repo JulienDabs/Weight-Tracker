@@ -1,5 +1,6 @@
  
 import "./App.css";
+import LoginForm from "./components/auth/loginForm";
 import UserRegistrationForm from "./components/UserRegistrationForm";
 
 function App() {
@@ -9,7 +10,9 @@ function App() {
     <>
       <div>
         <h1>Welcome to Better Me</h1>
-        <UserRegistrationForm />
+        <LoginForm onLogin={function (email: string, password: string): void {
+          throw new Error("Function not implemented.");
+        } } />
       </div>
     </>
   );
