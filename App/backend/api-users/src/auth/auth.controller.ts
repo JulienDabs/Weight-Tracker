@@ -8,12 +8,15 @@ import {
   BadRequestException,
   NotFoundException,
   Get,
+  Res,
+  Req,
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RenewPasswordDto } from './dto/RenewPassword.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 @ApiTags('Authentification')
@@ -31,8 +34,12 @@ export class AuthController {
   @Post('login')
   @ApiResponse({ status: 201, description: 'User authentified succefully' })
   @ApiForbiddenResponse({ description: 'Invalid Password' })
-  signIn(@Body() loginDto: LoginDto) {
-    return this.authService.signIn(loginDto.email, loginDto.password);
+  async login(
+    @Body('email') email: string,
+    @Body('password') password: string,
+    @Res() res: Response
+  ) {
+    return this.authService.signIn(email, password, res);
   }
 
   @Get('verify-email')
@@ -75,5 +82,13 @@ export class AuthController {
       resetPasswordDto.password,
     );
     return { message: 'Password reset successful' };
+  }
+
+  @Get('verify-session')
+  @ApiResponse({ status: 200, description: 'token ok' })
+  @ApiForbiddenResponse({ description: 'token not valid' })
+  async verifySession(@Req() req: Request, @Res() res: Response) {
+    // Call the AuthService to handle the session verification
+    return this.authService.verifySession(req, res);
   }
 }

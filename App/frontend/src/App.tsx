@@ -1,7 +1,10 @@
  
 import "./App.css";
 import LoginForm from "./components/auth/loginForm";
-import UserRegistrationForm from "./components/UserRegistrationForm";
+
+import RegisterForm from "./components/auth/registerForm";
+import Header from "./components/Header/header";
+
 
 function App() {
    
@@ -9,10 +12,8 @@ function App() {
   return (
     <>
       <div>
-        <h1>Welcome to Better Me</h1>
-        <LoginForm onLogin={function (email: string, password: string): void {
-          throw new Error("Function not implemented.");
-        } } />
+        <Header/>
+        <LoginForm />
       </div>
     </>
   );

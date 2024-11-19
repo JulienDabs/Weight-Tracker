@@ -4,7 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
+  UnauthorizedException, 
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
@@ -13,6 +13,12 @@ import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import axios from 'axios';
+import { Response } from 'express';
+
+// Extend the Request interface to include cookies
+interface RequestWithCookies extends Request {
+  cookies: { [key: string]: string };
+}
 
 @Injectable()
 export class AuthService {
@@ -74,24 +80,39 @@ export class AuthService {
     return jwt.sign({ email }, secretKey, { expiresIn: '1h' });
   }
 
-  async signIn(email: string, password: string) {
+  async signIn(email: string, password: string, res: any) {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedException({ message: 'Email does not exist' });
+      throw new NotFoundException({ message: 'User not found' });
     }
 
-    const ismatch = await bcrypt.compare(password, user.password);
-    if (!ismatch) {
-      throw new UnauthorizedException({ message: 'Invalid Password' });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException({ message: 'Invalid password' });
     }
+
     const secretKey = process.env.JWT_SECRET_KEY;
     const payload = { id: user.id, email: user.email };
 
-    return {
-      tokenAccess: await this.jwtService.signAsync(payload, {
-        secret: secretKey,
-      }),
-    };
+    // Generate the token
+    const token = await this.jwtService.signAsync(payload, {
+      secret: secretKey,
+    });
+
+    // Set the token as an HTTP-only cookie
+    res.cookie('token', token, {
+      httpOnly: true, // Cannot be accessed by JavaScript
+      secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+      sameSite: 'strict', // Prevent CSRF attacks
+      maxAge: 3600000, // 1 hour in milliseconds
+    });
+
+    res
+      .status(200)
+      .json({
+        message: 'Login successful',
+        user: { id: user.id, email: user.email },
+      });
   }
 
   async verifyEmailToken(email: string, token: string): Promise<string> {
@@ -134,9 +155,7 @@ export class AuthService {
 
   async forgotPassword(email: string) {
     // Validate email format
-    if (
-      !email.match(/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/i)
-    ) {
+    if (!email.match(/^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/i)) {
       throw new BadRequestException('Invalid email format');
     }
 
@@ -170,9 +189,7 @@ export class AuthService {
       if (typeof decodedToken !== 'object' || !decodedToken.email) {
         throw new BadRequestException('Invalid token format');
       }
-
       const email = decodedToken.email;
-
       // Find user
       const user = await this.usersService.findByEmail(email);
       if (!user) {
@@ -188,4 +205,30 @@ export class AuthService {
       throw new BadRequestException('Invalid or expired token');
     }
   }
+
+  async verifySession(req: Request, res: Response) {
+    try {
+      const cookies = (req as any).cookies; // Correct type assertion
+      const token = cookies['token'];
+      if (!token) {
+        return res.status(401).json({ isAuthenticated: false });
+      }
+  
+      const secretKey = process.env.JWT_SECRET_KEY;
+      if (!secretKey) {
+        throw new Error('JWT secret key is not defined');
+      }
+  
+      // Correct usage of jwt.verify
+      const decoded = jwt.verify(token, secretKey);
+  
+      return res.status(200).json({
+        isAuthenticated: true,
+        user: decoded,
+      });
+    } catch (error) {
+      return res.status(401).json({ isAuthenticated: false });
+    }
+  }
+  
 }
