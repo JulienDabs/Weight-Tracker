@@ -41,8 +41,6 @@ export class WeightService {
       const projectedBmi = checkWeightGoalFeasibility(
         createWeightDto.weight,
         response.data.weightGoal,
-        height,
-        response.data.birthday,
       );
 
       let weeks: number;
@@ -227,6 +225,7 @@ export class WeightService {
     const heightInMeters = height / 100;
     const bmi = weight / (heightInMeters * heightInMeters);
 
+    
     return parseFloat(bmi.toFixed(2)); // Round to two decimal places
   }
 }

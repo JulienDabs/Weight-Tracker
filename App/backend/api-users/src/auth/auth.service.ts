@@ -115,7 +115,7 @@ export class AuthService {
       });
   }
 
-  async verifyEmailToken(email: string, token: string): Promise<string> {
+  async verifyEmailToken(email: string, token: string, res: Response): Promise<void> {
     // Fetch the user by email
     const user = await this.usersService.findByEmail(email);
 
@@ -147,7 +147,7 @@ export class AuthService {
 
       // Update the user's verification status
       await this.usersService.updateUserVerificationStatus(user.id);
-      return 'Email verification successful';
+      res.redirect('http://localhost:5173/login');
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');
     }
@@ -221,11 +221,11 @@ export class AuthService {
   
       // Correct usage of jwt.verify
       const decoded = jwt.verify(token, secretKey);
-  
+ 
       return res.status(200).json({
         isAuthenticated: true,
         user: decoded,
-      });
+      }); 
     } catch (error) {
       return res.status(401).json({ isAuthenticated: false });
     }

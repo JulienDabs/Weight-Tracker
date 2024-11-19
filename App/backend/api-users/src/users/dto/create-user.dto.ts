@@ -84,5 +84,8 @@ export class CreateUserDto {
   currentBmi?: number;
 
   @IsOptional()
+  projectedBmi?: number;
+
+  @IsOptional()
   currentWeeksToReachGoal?: number;
 }

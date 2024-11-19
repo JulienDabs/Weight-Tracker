@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import axios from 'axios';
 
 // Define the shape of the user object
@@ -47,6 +47,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(null);
     }
   };
+
+  
 
   // Check authentication status on component mount
   useEffect(() => {

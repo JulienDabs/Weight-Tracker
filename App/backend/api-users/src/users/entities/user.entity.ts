@@ -17,4 +17,5 @@ export class UserEntity implements Users{
     gender: $Enums.Gender;
     currentBmi: number ;
     currentWeeksToReachGoal: number;
+    projectedBmi: number;
 }

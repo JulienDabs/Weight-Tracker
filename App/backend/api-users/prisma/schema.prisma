@@ -8,21 +8,22 @@ datasource db {
 }
 
 model Users {
-  id            Int       @id @default(autoincrement())
-  firstname     String?
-  lastname      String?
-  email         String    @unique
-  password      String
-  currentWeight Float?
-  height        Int?
-  bloodPressure String?
-  weightGoal    Float?
-  isVerified    Boolean   @default(false)
-  gender        Gender?   @default(MALE)
-  birthday      DateTime?
-  currentActive Int?
-  currentBmi    Float?
+  id                      Int       @id @default(autoincrement())
+  firstname               String?
+  lastname                String?
+  email                   String    @unique
+  password                String
+  currentWeight           Float?
+  height                  Int?
+  bloodPressure           String?
+  weightGoal              Float?
+  isVerified              Boolean   @default(false)
+  gender                  Gender?   @default(MALE)
+  birthday                DateTime?
+  currentActive           Int?
+  currentBmi              Float?
   currentWeeksToReachGoal Int?
+  projectedBmi            Float?
 }
 
 enum Gender {

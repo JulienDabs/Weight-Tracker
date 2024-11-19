@@ -46,6 +46,7 @@ export class AuthController {
   async verifyEmail(
     @Query('email') email: string,
     @Query('token') token: string,
+    @Res() Res: Response
   ) {
     if (!email || !token) {
       throw new BadRequestException('Email and token are required');
@@ -53,7 +54,7 @@ export class AuthController {
    
 
     try {
-      const result = await this.authService.verifyEmailToken(email, token);
+      const result = await this.authService.verifyEmailToken(email, token, Res);
       return { message: result };
     } catch (error) {
       if (error instanceof NotFoundException) {

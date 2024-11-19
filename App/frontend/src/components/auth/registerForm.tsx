@@ -101,7 +101,7 @@ const RegisterForm: React.FC = () => {
         <input type="submit" value="Soumettre" />
       </form>
 
-      <a href=''>Déja enregisté</a>
+      <a href='/login'>Déja enregisté</a>
 
       {success && (
         <p>Merci de confirmer votre email en cliquant sur le lien reçu.</p>

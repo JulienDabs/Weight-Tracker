@@ -25,7 +25,7 @@ export class MailingService {
   async sendVerificationEmail(email: string, token: string): Promise<void> {
     const verificationUrl = `http://localhost:3000/auth/verify-email?email=${email}&token=${token}`;
 
-    const logo = ""
+    const logo = '';
 
     const mailOptions = {
       from: '"Better Me" <nepasrepondre@betterme.com>',
@@ -34,7 +34,7 @@ export class MailingService {
       html: `
             <div style="font-family: 'Roboto', Arial, sans-serif; line-height: 1.5; color: #696969; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #E1E4E8; border-radius: 8px;">
                 <div style="text-align: center;">
-                    <img src="../../assets/img/logo-png.png" alt="Better Me Logo" style="max-width: 150px; margin-bottom: 20px;">
+                    <img src="https://betterme.jmdwebdev.com/logo-svg.svg" alt="Better Me Logo" style="max-width: 300px; margin-bottom: 20px;">
                 </div>
                 <h2 style="color: #5ab5e5;">Vérification de votre Email</h2>
                 <p>Bonjour,</p>
@@ -54,7 +54,7 @@ export class MailingService {
 
   async sendResetPasswordToken(email: string, token: string): Promise<void> {
     const resetUrl = `http://localhost:3000/auth/reset-password?token=${token}`;
-  
+
     const mailOptions = {
       from: '"Better Me" <nepasrepondre@betterme.com>',
       to: email,
@@ -62,8 +62,8 @@ export class MailingService {
       html: `
           <div style="font-family: 'Roboto', Arial, sans-serif; line-height: 1.5; color: #696969; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #E1E4E8; border-radius: 8px;">
               <div style="text-align: center;">
-                  <img src="../../assets/img/logo-png.png" alt="Better Me Logo" style="max-width: 150px; margin-bottom: 20px;">
-              </div>
+                <img src="https://betterme.jmdwebdev.com/logo-svg.svg" alt="Better Me Logo" style="max-width: 300px; margin-bottom: 20px;">
+                <div/>
               <h2 style="color: #5ab5e5;">Réinitialisation de votre mot de passe</h2>
               <p>Bonjour,</p>
               <p>Vous avez demandé la réinitialisation de votre mot de passe pour votre compte <strong>Better Me</strong>. Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>
@@ -76,19 +76,19 @@ export class MailingService {
           </div>
       `,
     };
-  
+
     await this.transporter.sendMail(mailOptions);
   }
 
   async sendWeightReminderEmail(email: string): Promise<void> {
     const mailOptions = {
-        from: '"Better Me" <betterme@jmdwebdev.com>',
-        to: email,
-        subject: 'Rappel de mise à jour de votre poids',
-        html: `
+      from: '"Better Me" <betterme@jmdwebdev.com>',
+      to: email,
+      subject: 'Rappel de mise à jour de votre poids',
+      html: `
             <div style="font-family: 'Roboto', Arial, sans-serif; line-height: 1.5; color: #2C3E50; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #E1E4E8; border-radius: 8px;">
                 <div style="text-align: center;">
-                    <img src="../../assets/img/logo-png.png" alt="Better Me Logo" style="max-width: 150px; margin-bottom: 20px;">
+                    <img src="https://betterme.jmdwebdev.com/logo-svg.svg" alt="Better Me Logo" style="max-width: 300px; margin-bottom: 20px;">
                 </div>
                 <h2 style="color: #E74C3C;">Rappel de mise à jour de votre poids</h2>
                 <p>Bonjour,</p>
@@ -104,6 +104,5 @@ export class MailingService {
     };
 
     await this.transporter.sendMail(mailOptions);
-}
-
+  }
 }

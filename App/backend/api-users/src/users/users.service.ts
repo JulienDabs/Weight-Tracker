@@ -13,6 +13,9 @@ import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
 
+
+
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -79,6 +82,28 @@ export class UsersService {
         updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
       }
 
+      if (updateUserDto.currentWeight) {
+        updateUserDto.currentWeight = parseFloat(updateUserDto.currentWeight.toString());
+      }
+  
+      if (updateUserDto.weightGoal) {
+        updateUserDto.weightGoal = parseFloat(updateUserDto.weightGoal.toString());
+      }
+  
+      if (updateUserDto.height) {
+        updateUserDto.height = parseFloat(updateUserDto.height.toString());
+      }
+  
+      if (updateUserDto.currentActive) {
+        updateUserDto.currentActive = parseInt(updateUserDto.currentActive.toString());
+      }
+  
+      if (updateUserDto.birthday) {
+        updateUserDto.birthday = new Date(updateUserDto.birthday);
+      }
+
+     
+
       //get bmi from weight service
       const response = await axios.get(
         `http://weight-service:3003/weight/bmi/${updateUserDto.currentWeight}/${updateUserDto.height}`,
@@ -86,12 +111,22 @@ export class UsersService {
 
       updateUserDto.currentBmi = response.data;
 
+      //get bmi from weight service
+      const responseGoalBmi = await axios.get(
+        `http://weight-service:3003/weight/bmi/${updateUserDto.weightGoal}/${updateUserDto.height}`,
+      );
+
+      updateUserDto.projectedBmi = responseGoalBmi.data;
+
+     
       const updatedUser = await this.prisma.users.update({
         where: {
           id: userId,
         },
         data: updateUserDto,
       });
+
+      console.log(updatedUser);
       const { password, ...result } = updatedUser;
       return result;
     } catch (error) {

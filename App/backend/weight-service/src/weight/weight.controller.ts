@@ -32,6 +32,8 @@ export class WeightController {
     return this.weightService.create(createWeightDto);
   }
 
+   
+
   @Get('/user/:userid') // Correctly specify the route parameter
   @ApiOperation({ summary: 'Get all Weights from a user' })
   @ApiParam({ name: 'userid', type: 'number' })

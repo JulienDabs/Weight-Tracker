@@ -31,7 +31,7 @@ const LoginForm: React.FC = () => {
     try {
       const { email, password } = data;
 
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:3000/auth/login",
         {
           email,
@@ -43,8 +43,6 @@ const LoginForm: React.FC = () => {
       );
       await checkAuthStatus();
       setSuccess(true); // Set success to true on successful response
-      const token = response.data.tokenAccess;
-      handleToken(token);
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
         console.error("Axios Error:", error.message);
@@ -57,12 +55,6 @@ const LoginForm: React.FC = () => {
       } else {
         console.error("Unexpected Error:", error);
       }
-    }
-  };
-
-  const handleToken = (token: string) => {
-    if (token) {
-      sessionStorage.setItem("token", token); // Store the token with a key of "token"
     }
   };
 
