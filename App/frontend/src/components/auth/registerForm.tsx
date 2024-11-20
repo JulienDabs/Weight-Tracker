@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
 import axios from 'axios';
-import './registerForm.scss'; // Ensure your SCSS file path is correct
+import '../../Style/registerForm.css'; 
+import Header from '../Header/header';
 
 interface IFormInput {
   email: string;
@@ -10,8 +11,10 @@ interface IFormInput {
 }
 
 const RegisterForm: React.FC = () => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm<IFormInput>();
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm<IFormInput>();
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [userExist, setUserExist] = useState(false);
 
   // Use useWatch to watch the password field
   const password = useWatch({
@@ -24,6 +27,9 @@ const RegisterForm: React.FC = () => {
       // Destructure email and password for the API call
       const { email, password } = data;
       console.log(data);
+      setLoading(true);
+
+      reset();
 
       const response = await axios.post("http://localhost:3000/auth/register", { email, password });
       console.log("Success:", response.data);
@@ -40,6 +46,8 @@ const RegisterForm: React.FC = () => {
             alert("Invalid request. Please check your input.");
           } else if (error.response.status === 500) {
             alert("Server error. Please try again later.");
+          } else if (error.response.status === 401) {
+            setUserExist(true);
           }
         } else if (error.request) {
           console.error("No Response Received:", error.request);
@@ -51,11 +59,15 @@ const RegisterForm: React.FC = () => {
         console.error("Unexpected Error:", error);
       }
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
-    <h1>Incription</h1>
+    <Header/>
+    <h1>Inscription</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label>Email</label>
@@ -101,11 +113,17 @@ const RegisterForm: React.FC = () => {
         <input type="submit" value="Soumettre" />
       </form>
 
-      <a href='/login'>Déja enregisté</a>
+      <a href='/login' className='login-shortcut'>Déja enregisté ?</a>
+
+    {loading && <p className='warning'>Envoi en cours...</p>}
 
       {success && (
-        <p>Merci de confirmer votre email en cliquant sur le lien reçu.</p>
+        <p className='warning'>Merci de confirmer votre email en cliquant sur le lien reçu.</p>
       )}
+
+      {userExist && (
+        <p className='alert'>Cet email est déjà enregistré.</p>
+      )} 
     </>
   );
 };

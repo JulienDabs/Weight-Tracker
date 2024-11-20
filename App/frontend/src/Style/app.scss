@@ -1,0 +1,15 @@
+
+@import "Variables/variables";
+@import "MixIn/mixin";
+
+body {
+    font-family: $textFont;
+    color: $Grey;
+
+    h1{
+        color: $Blue;
+        font-family: $h1Font;
+    }
+
+}
+

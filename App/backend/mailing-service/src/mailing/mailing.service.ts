@@ -25,8 +25,6 @@ export class MailingService {
   async sendVerificationEmail(email: string, token: string): Promise<void> {
     const verificationUrl = `http://localhost:3000/auth/verify-email?email=${email}&token=${token}`;
 
-    const logo = '';
-
     const mailOptions = {
       from: '"Better Me" <nepasrepondre@betterme.com>',
       to: email,
@@ -48,6 +46,8 @@ export class MailingService {
             </div>
         `,
     };
+
+    console.log(this.transporter);
 
     await this.transporter.sendMail(mailOptions);
   }

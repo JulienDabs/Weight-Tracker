@@ -10,7 +10,7 @@ services:
     ports:
       - "5173:5173"
     working_dir: /app
-    command: npm run setup
+    command: npm run setup 
     depends_on:
       - api-users
     networks:
@@ -23,7 +23,7 @@ services:
     ports:
       - "3000:3000"
     working_dir: /app
-    command: npm run setup
+    command: npm run setup ; npm run migrate
     depends_on:
       - database
       - database_wt
@@ -51,7 +51,7 @@ services:
     ports:
       - "3003:3003"
     working_dir: /app
-    command: npm run setup
+    command: npm run setup ; npm run migrate
     depends_on:
       - database
       - database_wt

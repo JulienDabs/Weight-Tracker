@@ -3,6 +3,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { AuthContext } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuthState } from "../auth/AuthStateContext";
+import Header from "../Header/header";
+import "../../Style/CreateProfile.css";
 
 interface IFormInput {
   firstname: string;
@@ -15,19 +18,22 @@ interface IFormInput {
   gender: string;
   birthday: Date;
 }
+
 const CreateProfile: React.FC = () => {
-  const { register, handleSubmit, getValues } = useForm<IFormInput>();
+  const { register, handleSubmit, getValues, formState: { errors }, reset } = useForm<IFormInput>();
   const { user } = useContext(AuthContext);
+  const { isVerified } = useAuthState();
   const [notSafe, setNotSafe] = useState(false);
   const [success, setSuccess] = useState(false);
-  //const navigate = useNavigate(); // Hook for navigation
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Redirect to login if user is not authenticated
-  // useEffect(() => {
-  //     if (!user) {
-  //       navigate("/login");
-  //     }
-  //   }, [user, navigate]);
+  // Redirect to login if user is not authenticated or not verified
+  useEffect(() => {
+    if (!user || !isVerified) {
+      navigate("/login");
+    }
+  }, [user, isVerified, navigate]);
 
   // Function to check if the weight goal is too low
   const checkGoalWeight = () => {
@@ -42,11 +48,12 @@ const CreateProfile: React.FC = () => {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log(user);
     if (!user) {
       console.error("User ID is not available");
       return;
     }
+
+    setLoading(true)
 
     // Convert height from meters to centimeters if applicable
     let height = data.height;
@@ -68,6 +75,7 @@ const CreateProfile: React.FC = () => {
 
       if (response.data) {
         setSuccess(true);
+        reset()
       }
 
       if (!response) {
@@ -77,13 +85,16 @@ const CreateProfile: React.FC = () => {
     } catch (error) {
       console.error("Error:", error);
     }
+
+    setLoading(false)
   };
 
   return (
     <>
+    <Header/>
       <h1>Créer votre profil</h1>
       <h3>
-        Afin de calculer votre poids ideal veuillez entrer les informations
+        Afin de calculer votre poids idéal veuillez entrer les informations
         ci-dessous
       </h3>
 
@@ -155,16 +166,20 @@ const CreateProfile: React.FC = () => {
         </div>
 
         <div>
-          <label>Activité (1-3)</label>
-          <input
-            type="number"
-            min="1"
-            max="3"
-            {...register("currentActive", {
-              required: "Votre niveau d'activité est requis",
-            })}
-          />
-        </div>
+  <label>Activité</label>
+  <select
+    {...register("currentActive", {
+      required: "Votre niveau d'activité est requis",
+    })}
+  >
+    <option value="">Sélectionnez votre niveau d'activité</option>
+    <option value="1">1 - Sédentaire (peu de sport)</option>
+    <option value="2">2 - Actif (sport 2 à 3 fois par semaine)</option>
+    <option value="3">3 - Très actif (sport tous les jours)</option>
+  </select>
+  {errors.currentActive && <p className="error">{errors.currentActive.message}</p>}
+</div>
+
 
         <div>
           <label>Genre</label>
@@ -187,7 +202,8 @@ const CreateProfile: React.FC = () => {
 
         <input type="submit" value="Créer mon profil" />
       </form>
-      {success && <p>Profil créé avec succès !</p>}
+      {loading && <p className="warning">Chargement...</p>}
+      {success && navigate("/dashboard")}
     </>
   );
 };

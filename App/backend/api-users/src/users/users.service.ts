@@ -118,6 +118,8 @@ export class UsersService {
 
       updateUserDto.projectedBmi = responseGoalBmi.data;
 
+      updateUserDto.profileCompleted = true;
+
      
       const updatedUser = await this.prisma.users.update({
         where: {

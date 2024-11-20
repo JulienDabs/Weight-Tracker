@@ -1,0 +1,58 @@
+@import 'https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Archivo+Black&display=swap';
+form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+  border: 1px solid white;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+form div {
+  margin-bottom: 1.5rem;
+}
+form div label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+form div input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #83858a;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+form div input:focus {
+  border-color: #5ab5e5;
+  outline: none;
+}
+form .error {
+  color: #ff0000;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+form input[type=submit] {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #5ab5e5;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+form input[type=submit]:hover {
+  background-color: rgb(21, 164, 241);
+}
+
+.login-shortcut {
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  padding: 1rem;
+}
+.login-shortcut:hover {
+  cursor: pointer;
+  color: #5ab5e5;
+}/*# sourceMappingURL=registerForm.css.map */

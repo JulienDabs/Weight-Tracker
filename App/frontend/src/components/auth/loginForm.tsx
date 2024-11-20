@@ -1,7 +1,11 @@
 import React, { useContext, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
+import "../../Style/loginForm.css";
+import { useAuthState } from "./AuthStateContext";
+import Header from "../Header/header";
 
 interface IFormInput {
   email: string;
@@ -10,10 +14,17 @@ interface IFormInput {
 
 const LoginForm: React.FC = () => {
   const { checkAuthStatus } = useContext(AuthContext);
-  const [success, setSuccess] = useState(false);
-  const [error401, setError401] = useState(false);
-  const [error404, setError404] = useState(false);
-  const [error500, setError500] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [status, setStatus] = useState({
+    success: false,
+    error401: false,
+    error404: false,
+    resent: false,
+  });
+  const [loading, setLoading] = useState(false);
+  const { setIsVerified, setProfileCompleted, isVerified, profileCompleted } =
+    useAuthState();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -21,46 +32,78 @@ const LoginForm: React.FC = () => {
   } = useForm<IFormInput>();
 
   const handleKey = () => {
-    setSuccess(false);
-    setError401(false);
-    setError404(false);
-    setError500(false);
+    setStatus({
+      success: false,
+      error401: false,
+      error404: false,
+      resent: false,
+    });
+  };
+
+  const handleResent = async (id: string | null) => {
+    if (!id) {
+      console.error("User ID is not available for resending the email.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`http://localhost:3000/auth/resend-verif-email/${id}`);
+      setStatus((prevState) => ({ ...prevState, resent: true }));
+    } catch (error) {
+      console.error("Failed to resend email", error);
+      setStatus((prevState) => ({ ...prevState, resent: false }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRedirect = () => {
+    navigate("/dashboard");
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    setLoading(true);
     try {
-      const { email, password } = data;
-
-      await axios.post(
+      const authResponse = await axios.post(
         "http://localhost:3000/auth/login",
-        {
-          email,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
+        data,
+        { withCredentials: true }
       );
       await checkAuthStatus();
-      setSuccess(true); // Set success to true on successful response
+
+      const id = authResponse.data.user.id;
+      setUserId(id);
+
+      const response = await axios.get(`http://localhost:3000/users/${id}`);
+
+      if (response.data.isVerified) {
+        setIsVerified(true);
+        setProfileCompleted(response.data.profileCompleted);
+        setStatus((prevState) => ({ ...prevState, success: true }));
+      } else {
+        setIsVerified(false);
+        setStatus((prevState) => ({ ...prevState, success: true }));
+      }
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
-        console.error("Axios Error:", error.message);
+        if (error.response?.status === 401) {
+          setStatus((prevState) => ({ ...prevState, error401: true }));
+        } else if (error.response?.status === 404) {
+          setStatus((prevState) => ({ ...prevState, error404: true }));
+        } else {
+          console.error("Unexpected error", error);
+        }
       }
-      if (error.response && error.response.status === 401) {
-        setError401(true);
-      }
-      if (error.response && error.response.status === 404) {
-        setError404(true);
-      } else {
-        console.error("Unexpected Error:", error);
-      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <h1>Identification</h1>
+    <Header/>
+      <h1 className="title">Connexion</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label>Email</label>
@@ -91,14 +134,38 @@ const LoginForm: React.FC = () => {
           )}
         </div>
 
-        <input type="submit" value="Se connecter" />
+        <input type="submit" value="Se connecter" disabled={loading} />
       </form>
 
-      {error401 && <p>Email ou mot de passe invalide veuillez réésayer</p>}
-      {error404 && <p>Le compte n'existe pas</p>}
-      {error500 && <p>Erreur serveur</p>}
+      {status.error401 && (
+        <p className="alert">Email ou mot de passe invalide, veuillez réessayer</p>
+      )}
+      {status.error404 && <p className="alert">Le compte n'existe pas</p>}
+      {status.success && !isVerified && (
+        <>
+          <p className="warning">
+            Pour accéder à votre compte, veuillez confirmer votre adresse email
+            en suivant le lien que nous vous avons envoyé.
+          </p>
 
-      {success && <p>Connexion réussie. Bienvenue !</p>}
+          <button onClick={() => handleResent(userId)}>
+            Pas reçu d'email ?
+          </button>
+        </>
+      )}
+      {loading && <p>Chargement...</p>}
+      {status.success && !isVerified && status.resent && (
+        <p className="success">Email renvoyé, merci de vérifier votre boîte</p>
+      )}
+      {status.success && isVerified && profileCompleted && handleRedirect()}
+      {status.success && isVerified && !profileCompleted && (
+        <>
+          <p className="warning">Veuillez compléter votre profil pour accéder à votre dashboard.</p>
+          <button onClick={() => navigate("/createprofile")}>
+            Compléter mon profil
+          </button>
+        </>
+      )}
     </>
   );
 };

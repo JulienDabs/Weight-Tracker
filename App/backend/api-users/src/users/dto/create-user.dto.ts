@@ -88,4 +88,7 @@ export class CreateUserDto {
 
   @IsOptional()
   currentWeeksToReachGoal?: number;
+
+  @IsOptional()
+  profileCompleted?: boolean;
 }

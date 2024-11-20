@@ -10,6 +10,7 @@ import {
   Get,
   Res,
   Req,
+  Param,
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -91,5 +92,19 @@ export class AuthController {
   async verifySession(@Req() req: Request, @Res() res: Response) {
     // Call the AuthService to handle the session verification
     return this.authService.verifySession(req, res);
+  }
+
+  @Post('resend-verif-email/:id')
+  @ApiResponse({ status: 200, description: 'Verification email resent' })
+  @ApiForbiddenResponse({ description: 'Invalid Email' })
+  async resentVerifEmail(@Param('id')  id: number ) {
+        await this.authService.resendVerifEmail(+id);
+    return { message: 'Verification email resent' };
+  }
+
+  @Post('logout')
+  @ApiResponse({ status: 200, description: 'Logout successful' })
+  async logout(@Res() res: Response) {
+    return this.authService.logOut(res);
   }
 }

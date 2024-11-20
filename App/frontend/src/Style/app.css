@@ -1,0 +1,9 @@
+@import 'https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Archivo+Black&display=swap';
+body {
+  font-family: "Afacad Flux", sans-serif;
+  color: #83858a;
+}
+body h1 {
+  color: #5ab5e5;
+  font-family: "Archivo Black", sans-serif;
+}/*# sourceMappingURL=app.css.map */

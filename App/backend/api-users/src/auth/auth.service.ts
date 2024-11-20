@@ -70,6 +70,18 @@ export class AuthService {
     return createdUser;
   }
 
+  async resendVerifEmail(id: number) {
+    const user = await this.usersService.findOne(+id);
+    const token = this.generateVerificationToken(user.email);
+    await axios.post(
+      'http://mailing-service:3001/mailing/send-verification-email',
+      {
+        email: user.email,
+        token,
+      },
+    );
+  }
+
   private generateVerificationToken(email: string): string {
     const secretKey = process.env.JWT_SECRET_KEY; // Ensure this is set in your .env file
     if (!secretKey) {
@@ -229,6 +241,11 @@ export class AuthService {
     } catch (error) {
       return res.status(401).json({ isAuthenticated: false });
     }
+  }
+
+  async logOut( res: Response) {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logout successful' });
   }
   
 }

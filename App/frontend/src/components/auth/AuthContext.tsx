@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Define the shape of the user object
 interface User {
@@ -8,19 +9,26 @@ interface User {
   // Add other fields as necessary
 }
 
+
+
 // Define the context value type
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   checkAuthStatus: () => Promise<void>;
+  logout: () => Promise<void>;
 }
+
+const navigate = useNavigate();
 
 // Create the AuthContext and provide default values
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
-  checkAuthStatus: async () => {},
-});
+  checkAuthStatus: async () => { },
+  logout: async () => { },
+  },
+);
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -48,6 +56,17 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      await axios.post('http://localhost:3000/auth/logout', { withCredentials: true });
+      setIsAuthenticated(false);
+      setUser(null);
+      navigate("/login")
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
   
 
   // Check authentication status on component mount
@@ -56,7 +75,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, checkAuthStatus }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, checkAuthStatus, logout }}>
       {children}
     </AuthContext.Provider>
   );

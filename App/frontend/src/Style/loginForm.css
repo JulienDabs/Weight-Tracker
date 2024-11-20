@@ -1,0 +1,117 @@
+@import 'https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Archivo+Black&display=swap';
+.alert {
+  /* width: 20%; */
+  background-color: rgb(240, 163, 163);
+  border: none;
+  color: rgb(105, 13, 13);
+  display: flex;
+  /* flex-direction: row; */
+  justify-content: center;
+  border-radius: 6px;
+  margin-left: -9px;
+  padding: 0.3rem;
+  max-width: 400px;
+  margin: 0 auto;
+  margin-top: 1rem;
+}
+
+button {
+  width: 10%;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #5ab5e5;
+  color: #fff;
+  cursor: pointer;
+  margin: 0 auto;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+button:hover {
+  background-color: #5ab5e5;
+}
+
+h1 {
+  display: grid;
+  justify-content: center;
+}
+
+.alert {
+  max-width: 20%;
+  background-color: rgb(240, 163, 163);
+  border: none;
+  color: rgb(105, 13, 13);
+  border-radius: 6px;
+  margin: 0 auto;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.success {
+  max-width: 20%;
+  background-color: rgb(163, 240, 163);
+  border: none;
+  color: rgb(16, 105, 13);
+  border-radius: 6px;
+  margin: 0 auto;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.warning {
+  max-width: 20%;
+  background-color: rgb(240, 209, 163);
+  border: none;
+  color: rgb(105, 81, 13);
+  border-radius: 6px;
+  margin: 0 auto;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-form-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid #83858a;
+  border-radius: 8px;
+}
+.login-form-container h2 {
+  text-align: center;
+}
+.login-form-container .form-group {
+  margin-bottom: 1rem;
+}
+.login-form-container .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.login-form-container .form-group input {
+  width: 90%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #83858a;
+}
+.login-form-container .form-group .error {
+  color: red;
+  margin-top: 0.5rem;
+}
+.login-form-container .login-button {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #5ab5e5;
+  color: #fff;
+  cursor: pointer;
+}
+.login-form-container .login-button:hover {
+  background-color: #5ab5e5;
+}/*# sourceMappingURL=loginForm.css.map */

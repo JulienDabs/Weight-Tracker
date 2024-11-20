@@ -18,4 +18,5 @@ export class UserEntity implements Users{
     currentBmi: number ;
     currentWeeksToReachGoal: number;
     projectedBmi: number;
+    profileCompleted: boolean;
 }

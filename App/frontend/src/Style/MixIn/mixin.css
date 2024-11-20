@@ -1,0 +1,15 @@
+.alert {
+  /* width: 20%; */
+  background-color: rgb(240, 163, 163);
+  border: none;
+  color: rgb(105, 13, 13);
+  display: flex;
+  /* flex-direction: row; */
+  justify-content: center;
+  border-radius: 6px;
+  margin-left: -9px;
+  padding: 0.3rem;
+  max-width: 400px;
+  margin: 0 auto;
+  margin-top: 1rem;
+}/*# sourceMappingURL=mixin.css.map */

@@ -18,11 +18,12 @@ model Users {
   bloodPressure           String?
   weightGoal              Float?
   isVerified              Boolean   @default(false)
-  gender                  Gender?   @default(MALE)
   birthday                DateTime?
   currentActive           Int?
   currentBmi              Float?
   currentWeeksToReachGoal Int?
+  gender                  Gender?   @default(MALE)
+  profileCompleted         Boolean?  @default(false)
   projectedBmi            Float?
 }
 

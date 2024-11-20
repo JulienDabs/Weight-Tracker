@@ -1,0 +1,27 @@
+@import 'https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Archivo+Black&display=swap';
+
+//Colors
+
+$Blue: #5ab5e5;
+$Grey: #83858a;
+$White: white;
+$backgroundSuccess: rgb(163, 240, 163);
+$colorFontSuccess: rgb(16, 105, 13);
+$backgroundAlert: rgb(240, 163, 163);
+$colorFontAlert: rgb(105, 13, 13);
+$backgroundWarning: rgb(240, 209, 163);
+$colorFontWarning: rgb(105, 81, 13);
+
+
+// Fonts
+
+$h1Font: "Archivo Black", sans-serif;
+$textFont: "Afacad Flux", sans-serif;
+
+
+@mixin default-font-settings {
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "slnt" 0;
+  }
