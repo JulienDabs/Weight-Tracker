@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
-import axios from 'axios';
-import '../../Style/registerForm.css'; 
-import Header from '../Header/header';
+import React, { useState } from "react";
+import { useForm, SubmitHandler, useWatch } from "react-hook-form";
+import axios from "axios";
+import "../../Style/registerForm.css";
+import Header from "../Header/header";
 
 interface IFormInput {
   email: string;
@@ -11,7 +11,13 @@ interface IFormInput {
 }
 
 const RegisterForm: React.FC = () => {
-  const { register, handleSubmit, control, formState: { errors }, reset } = useForm<IFormInput>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm<IFormInput>();
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userExist, setUserExist] = useState(false);
@@ -29,10 +35,12 @@ const RegisterForm: React.FC = () => {
       console.log(data);
       setLoading(true);
 
-      reset();
-
-      const response = await axios.post("http://localhost:3000/auth/register", { email, password });
+      const response = await axios.post("http://localhost:3000/auth/register", {
+        email,
+        password,
+      });
       console.log("Success:", response.data);
+      reset();
       setSuccess(true); // Indicate success
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
@@ -58,16 +66,15 @@ const RegisterForm: React.FC = () => {
       } else {
         console.error("Unexpected Error:", error);
       }
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
   return (
     <>
-    <Header/>
-    <h1>Inscription</h1>
+      <Header />
+      <h1>Inscription</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label>Email</label>
@@ -76,8 +83,8 @@ const RegisterForm: React.FC = () => {
               required: "Email est requis",
               pattern: {
                 value: /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/,
-                message: "Email non valide"
-              }
+                message: "Email non valide",
+              },
             })}
           />
           {errors.email && <p className="error">{errors.email.message}</p>}
@@ -91,11 +98,14 @@ const RegisterForm: React.FC = () => {
               required: "Mot de passe est requis",
               pattern: {
                 value: /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
-                message: "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, et un chiffre ou un caractère spécial."
-              }
+                message:
+                  "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, et un chiffre ou un caractère spécial.",
+              },
             })}
           />
-          {errors.password && <p className="error">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="error">{errors.password.message}</p>
+          )}
         </div>
 
         <div>
@@ -104,29 +114,33 @@ const RegisterForm: React.FC = () => {
             type="password"
             {...register("confirmPassword", {
               required: "Veuillez confirmer votre mot de passe",
-              validate: (value) => value === password || "Les mots de passe ne correspondent pas"
+              validate: (value) =>
+                value === password || "Les mots de passe ne correspondent pas",
             })}
           />
-          {errors.confirmPassword && <p className="error">{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && (
+            <p className="error">{errors.confirmPassword.message}</p>
+          )}
         </div>
 
         <input type="submit" value="Soumettre" />
       </form>
 
-      <a href='/login' className='login-shortcut'>Déja enregisté ?</a>
+      <a href="/login" className="login-shortcut">
+        Déja enregisté ?
+      </a>
 
-    {loading && <p className='warning'>Envoi en cours...</p>}
+      {loading && <p className="warning">Envoi en cours...</p>}
 
       {success && (
-        <p className='warning'>Merci de confirmer votre email en cliquant sur le lien reçu.</p>
+        <p className="warning">
+          Merci de confirmer votre email en cliquant sur le lien reçu.
+        </p>
       )}
 
-      {userExist && (
-        <p className='alert'>Cet email est déjà enregistré.</p>
-      )} 
+      {userExist && <p className="alert">Cet email est déjà enregistré.</p>}
     </>
   );
 };
 
 export default RegisterForm;
-

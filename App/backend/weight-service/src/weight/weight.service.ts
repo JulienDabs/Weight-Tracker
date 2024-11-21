@@ -217,7 +217,18 @@ export class WeightService {
   }
 
   // Function to calculate BMI
-  calculateBMI(weight: number, height: number): number {
+  calculateBMI(weight: number | string, height: number | string): number {
+    
+
+
+    if (typeof weight === 'string') {
+      weight = parseFloat(weight);
+    }
+
+    if (typeof height === 'string') {
+      height = parseFloat(height);
+    }
+    
     if (height <= 0) {
       throw new Error('Height must be greater than zero.');
     }

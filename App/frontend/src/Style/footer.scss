@@ -1,0 +1,23 @@
+@import "../Style/Variables/variables";
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8rem;
+  width: 100%;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease-in-out; // Increased duration for smoother effect
+
+    &:hover {
+      color: $Blue;
+    }
+  }
+
+  .logoFooter {
+    width: 5%;
+  }
+}

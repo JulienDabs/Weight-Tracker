@@ -1,0 +1,18 @@
+@import 'https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Archivo+Black&display=swap';
+.container_display_profile {
+  width: 90%;
+  margin: 0 auto;
+  height: auto;
+}
+.container_display_profile h1 {
+  font-size: 4rem;
+  display: flex;
+  justify-content: flex-end;
+}
+.container_display_profile .background {
+  border: 0.1px solid #5ab5e5;
+  border-radius: 50px;
+}
+.container_display_profile p {
+  font-size: 1.3rem;
+}/*# sourceMappingURL=displayprofile.css.map */

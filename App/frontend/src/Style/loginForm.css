@@ -76,6 +76,13 @@ h1 {
   padding: 1rem;
 }
 
+.registerButton {
+  transition: background-color 0.3s;
+}
+.registerButton:hover {
+  background-color: rgb(21, 164, 241);
+}
+
 .login-form-container {
   max-width: 400px;
   margin: 0 auto;

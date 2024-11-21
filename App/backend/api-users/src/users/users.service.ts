@@ -13,9 +13,6 @@ import * as jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { Prisma } from '@prisma/client';
 
-
-
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -77,50 +74,69 @@ export class UsersService {
   }
 
   async update(userId: number, updateUserDto: UpdateUserDto) {
+    console.log('update clicked' + updateUserDto.height)
+    
     try {
+
+       // Fetch the existing user data
+    const existingUser = await this.prisma.users.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
       if (updateUserDto.password) {
         updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
       }
 
+      if (updateUserDto.height !== undefined) {
+        updateUserDto.height = parseInt(updateUserDto.height.toString());
+      } else if (existingUser.height !== null && existingUser.height !== undefined) {
+        updateUserDto.height = existingUser.height;
+      } else {
+        updateUserDto.height = undefined; // Or set a default value if appropriate
+      }
+
       if (updateUserDto.currentWeight) {
-        updateUserDto.currentWeight = parseFloat(updateUserDto.currentWeight.toString());
+        updateUserDto.currentWeight = parseFloat(
+          updateUserDto.currentWeight.toString(),
+        );
+        //get bmi from weight service
+        const response = await axios.get(
+          `http://weight-service:3003/weight/bmi/${updateUserDto.currentWeight}/${updateUserDto.height}`,
+        );
+
+        updateUserDto.currentBmi = response.data;
       }
-  
+
       if (updateUserDto.weightGoal) {
-        updateUserDto.weightGoal = parseFloat(updateUserDto.weightGoal.toString());
+        updateUserDto.weightGoal = parseFloat(
+          updateUserDto.weightGoal.toString(),
+        );
+
+        //get bmi from weight service
+        const responseGoalBmi = await axios.get(
+          `http://weight-service:3003/weight/bmi/${updateUserDto.weightGoal}/${updateUserDto.height}`,
+        );
+
+        updateUserDto.projectedBmi = responseGoalBmi.data;
       }
-  
-      if (updateUserDto.height) {
-        updateUserDto.height = parseFloat(updateUserDto.height.toString());
-      }
-  
+
       if (updateUserDto.currentActive) {
-        updateUserDto.currentActive = parseInt(updateUserDto.currentActive.toString());
+        updateUserDto.currentActive = parseInt(
+          updateUserDto.currentActive.toString(),
+        );
       }
-  
+
       if (updateUserDto.birthday) {
         updateUserDto.birthday = new Date(updateUserDto.birthday);
       }
 
-     
-
-      //get bmi from weight service
-      const response = await axios.get(
-        `http://weight-service:3003/weight/bmi/${updateUserDto.currentWeight}/${updateUserDto.height}`,
-      );
-
-      updateUserDto.currentBmi = response.data;
-
-      //get bmi from weight service
-      const responseGoalBmi = await axios.get(
-        `http://weight-service:3003/weight/bmi/${updateUserDto.weightGoal}/${updateUserDto.height}`,
-      );
-
-      updateUserDto.projectedBmi = responseGoalBmi.data;
+      console.log('user' + updateUserDto.firstname);
 
       updateUserDto.profileCompleted = true;
 
-     
       const updatedUser = await this.prisma.users.update({
         where: {
           id: userId,
@@ -193,6 +209,6 @@ export class UsersService {
     await this.prisma.users.update({
       where: { id: userId },
       data: { password: newPassword },
-    })
+    });
   }
 }

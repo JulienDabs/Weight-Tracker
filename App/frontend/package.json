@@ -11,12 +11,21 @@
     "setup": "npm install && npm run dev"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@fortawesome/fontawesome-svg-core": "^6.7.1",
+    "@fortawesome/free-brands-svg-icons": "^6.7.1",
+    "@fortawesome/free-regular-svg-icons": "^6.7.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.1",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@mui/material": "^6.1.8",
     "axios": "^1.7.7",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
     "react-router-dom": "^6.28.0",
+    "react-spring": "^9.7.4",
     "sass": "^1.81.0"
   },
   "devDependencies": {

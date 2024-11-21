@@ -1,6 +1,6 @@
-import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState, useEffect, ReactNode } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Define the shape of the user object
 interface User {
@@ -8,8 +8,6 @@ interface User {
   email: string;
   // Add other fields as necessary
 }
-
-
 
 // Define the context value type
 interface AuthContextType {
@@ -19,16 +17,13 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
-const navigate = useNavigate();
-
 // Create the AuthContext and provide default values
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
-  checkAuthStatus: async () => { },
-  logout: async () => { },
-  },
-);
+  checkAuthStatus: async () => {},
+  logout: async () => {},
+});
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -37,11 +32,15 @@ interface AuthProviderProps {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  //const navigate = useNavigate(); 
 
   // Function to check if the user is authenticated
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/auth/verify-session', { withCredentials: true });
+      const response = await axios.get(
+        "http://localhost:3000/auth/verify-session",
+        { withCredentials: true }
+      );
       if (response.data.isAuthenticated) {
         setIsAuthenticated(true);
         setUser(response.data.user);
@@ -50,7 +49,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null);
       }
     } catch (error) {
-      console.error('Error checking auth status:', error);
+      console.error("Error checking auth status:", error);
       setIsAuthenticated(false);
       setUser(null);
     }
@@ -58,16 +57,18 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:3000/auth/logout', { withCredentials: true });
+      await axios.post(
+        "http://localhost:3000/auth/logout",
+        {},
+        { withCredentials: true }
+      );
       setIsAuthenticated(false);
       setUser(null);
-      navigate("/login")
+      //navigate("/login");
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
     }
   };
-
-  
 
   // Check authentication status on component mount
   useEffect(() => {
@@ -75,7 +76,9 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, checkAuthStatus, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, checkAuthStatus, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

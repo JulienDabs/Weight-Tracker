@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { AuthContext } from "../auth/AuthContext";
+import { AuthContext } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuthState } from "../auth/AuthStateContext";
-import Header from "../Header/header";
-import "../../Style/CreateProfile.css";
+import { useAuthState } from "../../auth/AuthStateContext";
+import Header from "../../Header/header";
+import "../../../Style/CreateProfile.css";
 
 interface IFormInput {
   firstname: string;
@@ -147,10 +147,10 @@ const CreateProfile: React.FC = () => {
         )}
 
         <div>
-          <label>Taille (cm ou m)</label>
+          <label>Taille (cm)</label>
           <input
             {...register("height", {
-              required: "Mettre votre taille en cm ou en mètres",
+              required: "Mettre votre taille en cm ex : 1,80m = 180cm",
               pattern: {
                 value: /^(?:(?:\d{2,3})|(?:\d(?:\.\d{1,2})))$/,
                 message:
@@ -191,14 +191,19 @@ const CreateProfile: React.FC = () => {
         </div>
 
         <div>
-          <label>Date de naissance</label>
-          <input
-            type="date"
-            {...register("birthday", {
-              required: "Votre date de naissance est requise",
-            })}
-          />
-        </div>
+        <label htmlFor="birthday">Date de naissance</label>
+        <input
+          type="date"
+          id="birthday"
+          {...register("birthday", {
+            required: "Votre date de naissance est requise",
+          })}
+          lang="fr" // Ensures the date picker is in French
+        />
+        {errors.birthday && (
+          <p style={{ color: "red" }}>{errors.birthday.message}</p>
+        )}
+      </div>
 
         <input type="submit" value="Créer mon profil" />
       </form>

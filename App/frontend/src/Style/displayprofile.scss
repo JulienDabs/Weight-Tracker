@@ -1,0 +1,25 @@
+@import "../Style/Variables/variables";
+
+.container_display_profile {
+    width: 90%;
+    margin: 0 auto;
+    height: auto;
+    
+    h1 {
+        font-size:4rem;
+        display: flex;
+        justify-content: flex-end;
+
+    }
+
+    .background{
+       // background-color: rgba(157, 163, 165, 0.192);
+        border: 0.1px solid $Blue;
+        border-radius: 50px;
+    }
+
+    p {
+        font-size: 1.3rem;
+    }
+    
+}

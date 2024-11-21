@@ -1,0 +1,38 @@
+@import 'https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Archivo+Black&display=swap';
+nav {
+  width: 100%;
+  display: flex; /* Flex container for alignment */
+  align-items: center; /* Align items vertically */
+  justify-content: space-between; /* Space between logo and nav list */
+  padding: 1rem 2rem; /* Adjust as needed for spacing */
+}
+nav .logo_navbar {
+  width: 5%;
+  padding-left: 1rem; /* Optional for additional spacing */
+}
+nav ul {
+  display: flex; /* Flex container for navigation items */
+  justify-content: flex-end; /* Align items to the right */
+  align-items: center; /* Vertical alignment */
+  margin: 0; /* Remove default margin */
+  padding-right: 2rem; /* Remove default padding */
+}
+nav ul li {
+  padding-right: 1rem; /* Space between nav items */
+  list-style: none; /* Remove bullet points */
+  margin: 0;
+}
+nav ul li a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #5ab5e5;
+  padding: 0.5rem;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+nav ul li a:hover {
+  color: #5ab5e5;
+  background-color: white;
+  transform: scale(1.1); /* Smooth grow effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Pop-out effect */
+  border-radius: 4px; /* Rounded corners */
+}/*# sourceMappingURL=navbar.css.map */

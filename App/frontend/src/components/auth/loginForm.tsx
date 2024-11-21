@@ -166,6 +166,10 @@ const LoginForm: React.FC = () => {
           </button>
         </>
       )}
+
+      <button onClick={() => navigate("/register")} className="registerButton">
+        Pas encore enregistré ?
+      </button>
     </>
   );
 };
