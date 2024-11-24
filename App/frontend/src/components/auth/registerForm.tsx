@@ -3,6 +3,8 @@ import { useForm, SubmitHandler, useWatch } from "react-hook-form";
 import axios from "axios";
 import "../../Style/registerForm.css";
 import Header from "../Header/header";
+import { Checkbox } from "@mui/material";
+import { Link } from "react-router-dom";
 
 interface IFormInput {
   email: string;
@@ -21,18 +23,21 @@ const RegisterForm: React.FC = () => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userExist, setUserExist] = useState(false);
+  const [isTcClicked, setIsTcClicked] = useState(false);
 
-  // Use useWatch to watch the password field
   const password = useWatch({
     control,
     name: "password",
   });
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    if (!isTcClicked) {
+      alert("Veuillez accepter les Conditions Générales d'Utilisation.");
+      return;
+    }
+
     try {
-      // Destructure email and password for the API call
       const { email, password } = data;
-      console.log(data);
       setLoading(true);
 
       const response = await axios.post("http://localhost:3000/auth/register", {
@@ -41,15 +46,10 @@ const RegisterForm: React.FC = () => {
       });
       console.log("Success:", response.data);
       reset();
-      setSuccess(true); // Indicate success
+      setSuccess(true);
     } catch (error: any) {
       if (axios.isAxiosError(error)) {
-        console.error("Axios Error:", error.message);
-
         if (error.response) {
-          console.error("Response Status:", error.response.status);
-          console.error("Response Data:", error.response.data);
-
           if (error.response.status === 400) {
             alert("Invalid request. Please check your input.");
           } else if (error.response.status === 500) {
@@ -58,10 +58,7 @@ const RegisterForm: React.FC = () => {
             setUserExist(true);
           }
         } else if (error.request) {
-          console.error("No Response Received:", error.request);
           alert("No response from the server. Please check your connection.");
-        } else {
-          console.error("Error Setting Up Request:", error.message);
         }
       } else {
         console.error("Unexpected Error:", error);
@@ -123,11 +120,28 @@ const RegisterForm: React.FC = () => {
           )}
         </div>
 
-        <input type="submit" value="Soumettre" />
+        {/* Terms and Conditions Checkbox */}
+        <div style={{ marginTop: "20px" }}>
+          <label>
+            <Checkbox
+              checked={isTcClicked}
+              onChange={() => setIsTcClicked(!isTcClicked)}
+              color="primary"
+            />
+            J'accepte les{" "}
+            <Link to="/tc" style={{ textDecoration: "none", color: "#1976d2" }}>
+              Conditions Générales d'Utilisation
+            </Link>
+          </label>
+        </div>
+      {isTcClicked && (
+        <div style={{ marginTop: "20px" }}>
+          <input type="submit" value="Soumettre" />
+        </div>)}
       </form>
 
       <a href="/login" className="login-shortcut">
-        Déja enregisté ?
+        Déjà enregistré ?
       </a>
 
       {loading && <p className="warning">Envoi en cours...</p>}

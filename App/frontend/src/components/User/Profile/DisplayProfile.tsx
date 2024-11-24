@@ -21,22 +21,7 @@ import Switch from "@mui/material/Switch";
 
 //Animation
 import { useSpring, animated } from "react-spring";
-
-interface UserInfo {
-  id: number;
-  firstname: string;
-  lastname: string;
-  currentWeight: number;
-  height: number;
-  weightGoal: number;
-  bloodPressure: string;
-  currentActive: number;
-  gender: string;
-  birthday: string;
-  currentBmi: number;
-  currentWeeksToReachGoal: number;
-  projectedBmi: number;
-}
+import { UserInfo } from "../../../Interfaces/interfaces";
 
 interface NumberProps {
   n: number;
@@ -299,72 +284,81 @@ const DisplayProfile: React.FC = () => {
               />
             </FormGroup>
           </div>
+          <div className="section">
+            <div className="background" id="user">
+              <p>
+                Nom de famille: {renderField("lastname", userInfo.lastname)}
+              </p>
 
-          <div className="background">
-            <p>Nom de famille: {renderField("lastname", userInfo.lastname)}</p>
+              <p>Prénom: {renderField("firstname", userInfo.firstname)}</p>
+              <p>
+                {userInfo.gender === "MALE" ? male : female} Genre:{" "}
+                {renderField(
+                  "gender",
+                  userInfo.gender === "MALE" ? "Homme" : "Femme",
+                  "text",
+                  [
+                    { value: "MALE", label: "Homme" },
+                    { value: "FEMALE", label: "Femme" },
+                  ]
+                )}
+              </p>
+              <p>
+                {birthdayIcon} Anniversaire:{" "}
+                {renderField(
+                  "birthday",
+                  `${new Date(
+                    userInfo.birthday
+                  ).toLocaleDateString()} (${calculateAge(
+                    userInfo.birthday
+                  )} ans)`,
+                  "date"
+                )}
+              </p>
+            </div>
+            <div className="background" id="weight">
+              <p>
+                {scalesIcon} Poids actuel:{" "}
+                {renderField(
+                  "currentWeight",
+                  <Number n={userInfo.currentWeight} delay={5} unit=" Kg" />,
+                  "number"
+                )}
+              </p>
 
-            <p>Prénom: {renderField("firstname", userInfo.firstname)}</p>
+              <p>
+                {scalesIcon} Objectif de poids :{" "}
+                {renderField(
+                  "weightGoal",
+                  <Number n={userInfo.weightGoal} delay={30} unit=" Kg" />,
+                  "number"
+                )}
+              </p>
+            </div>
+            <div className="background" id="height">
+              <p>
+                {rulerIcon} Taille :{" "}
+                {renderField(
+                  "height",
+                  <Number n={userInfo.height} delay={20} unit="cm" />,
+                  "number"
+                )}
+              </p>
 
-            <p>
-              {scalesIcon} Poids actuel:{" "}
-              {renderField(
-                "currentWeight",
-                <Number n={userInfo.currentWeight} delay={5} unit=" Kg" />,
-                "number"
-              )}
-            </p>
-
-            <p>
-              {userInfo.gender === "MALE" ? male : female} Genre:{" "}
-              {renderField(
-                "gender",
-                userInfo.gender === "MALE" ? "Homme" : "Femme",
-                "text",
-                [
-                  { value: "MALE", label: "Homme" },
-                  { value: "FEMALE", label: "Femme" },
-                ]
-              )}
-            </p>
-
-            <p>
-              {rulerIcon} Taille :{" "}
-              {renderField("height",
-                 <Number n={userInfo.height} delay={20} unit= "cm"/>,
-                  "number")}
-            </p>
-
-            <p>
-              {birthdayIcon} Anniversaire:{" "}
-              {renderField(
-                "birthday",
-                `${new Date(
-                  userInfo.birthday
-                ).toLocaleDateString()} (${calculateAge(
-                  userInfo.birthday
-                )} ans)`,
-                "date"
-              )}
-            </p>
-
-            <p>
-              {scalesIcon} Objectif de poids :{" "}
-              {renderField("weightGoal", <Number n={userInfo.weightGoal} delay={30} unit=" Kg" />, "number")}
-            </p>
-
-            <p>
-              {activeIcon} Niveau d'activité :{" "}
-              {renderField(
-                "currentActive",
-                getActivityDescription(parseInt(fieldValues.currentActive)),
-                "text",
-                [
-                  { value: "1", label: "Faible activité physique" },
-                  { value: "2", label: "Activité physique modérée" },
-                  { value: "3", label: "Activité physique intense" },
-                ]
-              )}
-            </p>
+              <p>
+                {activeIcon} Niveau d'activité :{" "}
+                {renderField(
+                  "currentActive",
+                  getActivityDescription(parseInt(fieldValues.currentActive)),
+                  "text",
+                  [
+                    { value: "1", label: "Faible activité physique" },
+                    { value: "2", label: "Activité physique modérée" },
+                    { value: "3", label: "Activité physique intense" },
+                  ]
+                )}
+              </p>
+            </div>
           </div>
 
           {/* Display warning if weight goal is not safe */}

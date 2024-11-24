@@ -20,3 +20,6 @@ export class UserEntity implements Users{
     projectedBmi: number;
     profileCompleted: boolean;
 }
+
+export { Users };
+

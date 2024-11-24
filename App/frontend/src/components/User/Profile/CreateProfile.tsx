@@ -68,8 +68,8 @@ const CreateProfile: React.FC = () => {
     }
 
     try {
-      const response = await axios.patch(
-        `http://localhost:3000/users/${user.id}`,
+      const response = await axios.post(
+        `http://localhost:3003/weight/${user.id}`,
         data
       );
 

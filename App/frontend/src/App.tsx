@@ -11,11 +11,12 @@ import RegisterForm from "./components/auth/registerForm";
 
 import CreateProfile from "./components/User/Profile/CreateProfile";
 import { AuthContext } from "./components/auth/AuthContext";
-import React, { useContext } from "react";
+import  { useContext } from "react";
 import NavBar from "./components/Nav/NavBar";
 import Dashboard from "./components/User/Dashboard";
 import DisplayProfile from "./components/User/Profile/DisplayProfile";
 import Footer from "./components/Footer/Footer";
+import TC from "./components/User/TC";
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -24,10 +25,12 @@ function App() {
     <div className="app-container">
       <Router>
         <NavBar />
+        <main>
         {/* Public Routes */}
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/tc" element={<TC/>} />
 
           {/* Protected Routes */}
 
@@ -52,6 +55,7 @@ function App() {
             element={<Navigate to={user ? "/dashboard" : "/login"} />}
           />
         </Routes>
+        </main>
         <Footer />
       </Router>
     </div>

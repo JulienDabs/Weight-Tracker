@@ -8,23 +8,25 @@ datasource db {
 }
 
 model Users {
-  id                      Int       @id @default(autoincrement())
-  firstname               String?
-  lastname                String?
-  email                   String    @unique
-  password                String
-  currentWeight           Float?
-  height                  Int?
-  bloodPressure           String?
-  weightGoal              Float?
-  isVerified              Boolean   @default(false)
-  birthday                DateTime?
-  currentActive           Int?
-  currentBmi              Float?
-  currentWeeksToReachGoal Int?
-  gender                  Gender?   @default(MALE)
-  profileCompleted         Boolean?  @default(false)
-  projectedBmi            Float?
+  id          Int           @id @default(autoincrement())
+  firstname   String?
+  lastname    String?
+  email       String        @unique
+  password    String
+  height      Int?
+  birthday    DateTime?
+  gender      Gender?       @default(MALE)
+  preferences Preferences[]
+}
+
+model Preferences {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  tcComplied       Boolean
+  tcCompliedDate   DateTime
+  isVerified       Boolean? @default(false)
+  profileCompleted Boolean? @default(false)
+  user             Users    @relation(fields: [userId], references: [id])
 }
 
 enum Gender {

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
+import { PreferencesService } from 'src/preferences/preferences.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
@@ -24,6 +25,7 @@ interface RequestWithCookies extends Request {
 export class AuthService {
   constructor(
     @Inject(UsersService) private usersService: UsersService,
+    @Inject(PreferencesService) private preferencesService: PreferencesService,
     @Inject(JwtService) private jwtService: JwtService,
   ) {}
 
@@ -55,8 +57,17 @@ export class AuthService {
       password: hashedPassword,
     };
 
+    
+
     // Create the user
     const createdUser = await this.usersService.create(userDto);
+     this.preferencesService.create({
+      userId: createdUser.id, // Provide the properties directly
+      tcComplied: true,
+      tcCompliedDate: new Date(),
+    });
+    
+
 
     // Send verification email
     await axios.post(
@@ -158,7 +169,7 @@ export class AuthService {
       }
 
       // Update the user's verification status
-      await this.usersService.updateUserVerificationStatus(user.id);
+      await this.preferencesService.updateUserVerificationStatus(user.id);
       res.redirect('http://localhost:5173/login');
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');

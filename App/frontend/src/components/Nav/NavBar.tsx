@@ -29,9 +29,12 @@ const NavBar: React.FC = () => {
   return (
     <nav>
       <div className="logo_navbar">
+        {user && isVerified && profileCompleted ? (
+          <Link to="/dashboard"><img src={logo} alt="better me logo"/></Link>
+        ) : (
         <Link to="/">
           <img src={logo} alt="Logo Better Me" />
-        </Link>
+        </Link>)}
       </div>
 
       
@@ -60,6 +63,7 @@ const NavBar: React.FC = () => {
               <li>
                 <Link to="/register">Inscription</Link>
               </li>
+              
               <li>
                 <Link to="/login">Connexion</Link>
               </li>

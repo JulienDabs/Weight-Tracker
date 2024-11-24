@@ -2,6 +2,18 @@
 @import "Variables/variables";
 @import "MixIn/mixin";
 
+.app-container {
+    min-height: 100vh;
+    width: 97%;
+    display: flex;
+    flex-direction: column;
+
+
+
+
+
+}
+
 body {
     font-family: $textFont;
     color: $Grey;
@@ -12,6 +24,10 @@ body {
         font-family: $h1Font;
     }
 
+}
+
+main {
+    flex:1
 }
 
 

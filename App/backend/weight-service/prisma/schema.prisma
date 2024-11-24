@@ -8,17 +8,19 @@ datasource db {
 }
 
 model Weight {
-  id            String   @id @default(uuid()) @db.Uuid
-  date          DateTime
-  weight        Float
-  userId        String
-  bloodPressure String?
-  chest         Float?
-  heartRate     Int?
-  hip           Float?
-  thigh         Float?
-  waist         Float?
-  active        Int?
-  bmi           Float
-  weeksToReachGoal Int
+  weight           Float?
+  userId           String
+  active           Int?
+  bloodPressure    String?
+  bmi              Float
+  chest            Int?
+  createdAt        DateTime @default(now())
+  heartRate        Int?
+  hip              Int?
+  projectedBmi     Float?
+  thigh            Int?
+  waist            Int?
+  weeksToReachGoal Int?
+  weightGoal       Float?
+  id               Int      @id @default(autoincrement())
 }

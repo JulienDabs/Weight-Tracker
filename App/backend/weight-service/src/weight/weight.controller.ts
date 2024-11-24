@@ -18,8 +18,9 @@ import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 export class WeightController {
   constructor(private readonly weightService: WeightService) {}
 
-  @Post('create')
+  @Post(':userId')
   @ApiOperation({ summary: 'Create a new Weight' })
+  @ApiParam({ name: 'userId', description: 'ID of the user', type: Number })
   @ApiBody({ type: CreateWeightDto })
   @ApiResponse({
     status: 201,
@@ -28,15 +29,16 @@ export class WeightController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createWeightDto: CreateWeightDto) {
-    return this.weightService.create(createWeightDto);
+  create(
+    @Param('userId') userId: string,
+    @Body() createWeightDto: CreateWeightDto,
+  ) {
+    return this.weightService.create(+userId, createWeightDto); // Convert userId to number
   }
 
-   
-
-  @Get('/user/:userid') // Correctly specify the route parameter
+  @Get('/user/:userid')
   @ApiOperation({ summary: 'Get all Weights from a user' })
-  @ApiParam({ name: 'userid', type: 'number' })
+  @ApiParam({ name: 'userid', type: 'number', description: 'ID of the user' })
   @ApiResponse({
     status: 200,
     description: 'Return all Weights from a user.',
@@ -44,12 +46,12 @@ export class WeightController {
   })
   @ApiResponse({ status: 404, description: 'Weight not found.' })
   findAll(@Param('userid') userid: string) {
-    return this.weightService.findAllByUserId(+userid);
+    return this.weightService.findAllByUserId(+userid); // Convert userid to number
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a Weight by id' })
-  @ApiParam({ name: 'id', type: 'number' })
+  @ApiParam({ name: 'id', type: 'number', description: 'ID of the weight record' })
   @ApiResponse({
     status: 200,
     description: 'Return the Weight.',
@@ -59,6 +61,7 @@ export class WeightController {
   findOne(@Param('id') id: string) {
     return this.weightService.findOne(id);
   }
+
   @Get('bmi/:weight/:height')
   @ApiOperation({ summary: 'Calculate BMI based on weight and height' })
   @ApiParam({
@@ -71,6 +74,11 @@ export class WeightController {
     description: 'The height of the user in centimeters',
     type: Number,
   })
+  @ApiResponse({
+    status: 200,
+    description: 'The BMI calculated based on weight and height.',
+    type: Number,
+  })
   getBMI(@Param('weight') weight: string, @Param('height') height: string): number {
     const weightNum = parseFloat(weight);
     const heightNum = parseFloat(height);
@@ -81,12 +89,10 @@ export class WeightController {
 
     return this.weightService.calculateBMI(weightNum, heightNum);
   }
-  
-
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a Weight' })
-  @ApiParam({ name: 'id', type: 'number' })
+  @ApiParam({ name: 'id', type: 'number', description: 'ID of the weight record' })
   @ApiBody({ type: UpdateWeightDto })
   @ApiResponse({
     status: 200,
@@ -96,18 +102,18 @@ export class WeightController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 404, description: 'Weight not found.' })
   update(@Param('id') id: string, @Body() updateWeightDto: UpdateWeightDto) {
-    return this.weightService.update(id, updateWeightDto);
+    return this.weightService.update(+id, updateWeightDto); // Convert id to number
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a Weight' })
-  @ApiParam({ name: 'id', type: 'number' })
+  @ApiParam({ name: 'id', type: 'number', description: 'ID of the weight record' })
   @ApiResponse({
     status: 200,
     description: 'The Weight has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Weight not found.' })
   remove(@Param('id') id: string) {
-    return this.weightService.remove(id);
+    return this.weightService.remove(+id); // Convert id to number
   }
 }

@@ -1,0 +1,10 @@
+.dashboard-list img,
+.dashboard-list svg {
+  width: 24px; /* Set a consistent width for icons */
+  height: 24px; /* Set a consistent height for icons */
+  flex-shrink: 0; /* Prevent icons from shrinking */
+}
+.dashboard-list img .cScale,
+.dashboard-list svg .cScale {
+  width: 7%;
+}/*# sourceMappingURL=dashboard.css.map */

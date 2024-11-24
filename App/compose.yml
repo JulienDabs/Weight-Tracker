@@ -23,7 +23,7 @@ services:
     ports:
       - "3000:3000"
     working_dir: /app
-    command: npm run setup ; npm run migrate
+    command: sh -c "npm run setup && npm run migrate"
     depends_on:
       - database
       - database_wt
@@ -51,10 +51,27 @@ services:
     ports:
       - "3003:3003"
     working_dir: /app
-    command: npm run setup ; npm run migrate
+    command: sh -c "npm run setup && npm run migrate"
     depends_on:
       - database
       - database_wt
+    networks:
+      - better_me_network
+
+  api-gateway:
+    image: node:20-alpine
+    volumes:
+      - ./backend/api-gateway:/app
+    ports:
+      - "3002:3002"
+    working_dir: /app
+    command: npm run setup =
+    depends_on:
+      - database
+      - database_wt
+      - api-users
+      - mailing-service
+      - weight-service
     networks:
       - better_me_network
 

@@ -75,7 +75,7 @@ const LoginForm: React.FC = () => {
       const id = authResponse.data.user.id;
       setUserId(id);
 
-      const response = await axios.get(`http://localhost:3000/users/${id}`);
+      const response = await axios.get(`http://localhost:3000/preferences/${id}`);
 
       if (response.data.isVerified) {
         setIsVerified(true);
@@ -168,7 +168,7 @@ const LoginForm: React.FC = () => {
       )}
 
       <button onClick={() => navigate("/register")} className="registerButton">
-        Pas encore enregistré ?
+        Création de compte
       </button>
     </>
   );

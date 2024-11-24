@@ -20,87 +20,112 @@ export class WeightService {
     this.logger.setContext('WeightService');
   }
 
-  // Updated create method
-  async create(createWeightDto: CreateWeightDto) {
+  async create(userId: number, createWeightDto: CreateWeightDto) {
     try {
-      // Make an Axios request to get the height
-      const response = await axios.get(
-        `http://api-users:3000/users/${createWeightDto.userId}`,
-      );
+      // Fetch user data
+      const userData = await axios.get(`http://api-users:3000/users/${userId}`);
 
-      const height = response.data.height;
-
-      if (!height || height <= 0) {
-        throw new Error('Invalid height value received from the API.');
+      console.log(userData.data)
+  
+      if (!userData || !userData.data) {
+        throw new NotFoundException(`User with ID ${userId} not found`);
       }
+  
+      const userHeight = userData.data.height;
+  
+      if (!userHeight || userHeight <= 0) {
+        throw new Error(`Invalid height value for user ID ${userId}`);
+      }
+  
       // Calculate BMI
-      const bmi = this.calculateBMI(createWeightDto.weight, height);
-
-      createWeightDto.bmi = bmi;
-
-      const projectedBmi = checkWeightGoalFeasibility(
-        createWeightDto.weight,
-        response.data.weightGoal,
+      createWeightDto.bmi = this.calculateBMI(createWeightDto.weight, userHeight);
+  
+      // Calculate projected BMI for the weight goal
+      createWeightDto.projectedBmi = this.calculateBMI(
+        createWeightDto.weightGoal,
+        userHeight,
       );
-
-      let weeks: number;
-      if (projectedBmi) {
-        // Get prediction
-        const predictedWeeks = predictWeeksToGoal({
-          currentWeight: createWeightDto.weight,
-          targetWeight: response.data.weightGoal,
-          gender: response.data.gender,
-          birthday: response.data.birthday,
-          activityLevel: createWeightDto.active,
-          height: height,
-          bloodPressure: response.data.bloodPressure,
-        });
-
-        if (typeof predictedWeeks === 'number') {
-          weeks = predictedWeeks;
-        } else {
-          throw new Error('Invalid weeks value returned from prediction.');
+  
+      // Parse blood pressure if provided
+      let bloodPressureInt: number | undefined;
+      if (createWeightDto.bloodPressure) {
+        bloodPressureInt = parseFloat(createWeightDto.bloodPressure);
+        if (isNaN(bloodPressureInt)) {
+          throw new Error(`Invalid blood pressure value: ${createWeightDto.bloodPressure}`);
         }
-      } else {
-        throw new Error('Votre objectif de poids est trop bas.');
       }
-
-      createWeightDto.weeksToReachGoal = weeks;
-
-      await axios.post(`http://api-users:3000/users/bmi`, {
-        id: createWeightDto.userId,
-        bmi,
-        weeks,
+  
+      // Predict weeks to reach the weight goal
+      const weeks = predictWeeksToGoal({
+        currentWeight: createWeightDto.weight,
+        gender: userData.data.gender,
+        bloodPressure: bloodPressureInt,
+        activityLevel: createWeightDto.active,
+        targetWeight: createWeightDto.weightGoal,
+        height: userHeight,
+        birthday: userData.data.birthday,
+        chestSize: createWeightDto.chest,
+        heartRate: createWeightDto.heartRate,
+        hip: createWeightDto.hip,
+        thigh: createWeightDto.thigh,
+        waist: createWeightDto.waist,
       });
-
-      // Create weight entry with the calculated BMI
+  
+      if (typeof weeks === 'number') {
+        createWeightDto.weeksToReachGoal = weeks;
+      } else {
+        throw new Error(`Invalid value returned from weeks prediction: ${weeks}`);
+      }
+  
+      // Create the weight entry in the database
       const weight = await this.prisma.weight.create({
         data: {
           ...createWeightDto,
+          userId: userId.toString(), // Ensure userId is a string if required by the schema
         },
       });
-
-      console.log('weeks to reach goal:' + weeks);
+  
+      // Return the created weight entry
       return weight;
     } catch (error) {
+      // Log and rethrow error
       if (axios.isAxiosError(error)) {
         this.logger.error(`Axios error: ${error.message}`, error.stack);
       } else {
-        this.logger.error(
-          `Error creating weight: ${error.message}`,
-          error.stack,
-        );
+        this.logger.error(`Error creating weight entry: ${error.message}`, error.stack);
       }
-      throw new InternalServerErrorException('Error creating weight');
+      throw new InternalServerErrorException('Error creating weight entry');
     }
   }
+  
+  
+ 
+async findMostRecent(userId: number) {
+    try {
+      const weight = await this.prisma.weight.findFirst({
+        where: { userId: userId.toString() },
+        orderBy: { createdAt: 'desc' },
+      });
 
+      if (!weight) {
+        throw new NotFoundException(`No weight found for user #${userId}`);
+      }
+
+      return weight;
+    } catch (error) {
+      this.logger.error(
+        `Error fetching most recent weight for user #${userId}: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException('Error fetching most recent weight');
+    }
+  }
   // Method to fetch weights for a specific user
   async findAllByUserId(userid: number) {
     try {
       const weights = await this.prisma.weight.findMany({
         where: { userId: userid.toString() },
-        orderBy: { date: 'desc' },
+        orderBy: { createdAt: 'desc' },
       });
 
       if (!weights || weights.length === 0) {
@@ -109,7 +134,7 @@ export class WeightService {
 
       // Format the date to 'dd-mm-yyyy'
       const formattedWeights = weights.map((weight) => {
-        const date = new Date(weight.date);
+        const date = new Date(weight.createdAt);
         const formattedDate = date
           .toLocaleDateString('fr-FR') // Formats to 'dd/mm/yyyy'
           .replace(/\//g, '-'); // Replace slashes with hyphens for 'dd-mm-yyyy'
@@ -151,7 +176,7 @@ export class WeightService {
   async findOne(id: string) {
     try {
       const weight = await this.prisma.weight.findUnique({
-        where: { id: id }, // Ensure the type matches your Prisma schema
+        where: { id: parseInt(id) }, // Ensure the type matches your Prisma schema
       });
 
       if (!weight) {
@@ -168,7 +193,7 @@ export class WeightService {
     }
   }
 
-  async update(id: string, updateWeightDto: UpdateWeightDto) {
+  async update(id: number, updateWeightDto: UpdateWeightDto) {
     try {
       const existingWeight = await this.prisma.weight.findUnique({
         where: { id: id }, // Ensure the type matches your Prisma schema
@@ -179,7 +204,7 @@ export class WeightService {
       }
 
       const updatedWeight = await this.prisma.weight.update({
-        where: { id: id.toString() }, // Ensure the type matches your Prisma schema
+        where: { id: parseInt(id.toString()) }, // Ensure the type matches your Prisma schema
         data: updateWeightDto,
       });
 
@@ -193,7 +218,7 @@ export class WeightService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: number) {
     try {
       const existingWeight = await this.prisma.weight.findUnique({
         where: { id: id }, // Ensure the type matches your Prisma schema

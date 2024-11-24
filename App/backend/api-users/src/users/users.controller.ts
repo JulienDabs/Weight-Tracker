@@ -91,14 +91,5 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
-  @Post('/bmi')
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  updateBmi(
-    @Body('id') id: number, // Extracting `id` from the request body
-    @Body('bmi') bmi: number,
-    @Body('weeks') weeks: number, // Extracting `bmi` from the request body
-  ) {
-    
-    return this.usersService.bmiUpdate(+id, bmi, weeks);
-  }
+ 
 }

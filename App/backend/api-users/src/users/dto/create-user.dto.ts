@@ -31,39 +31,9 @@ export class CreateUserDto {
   @IsString()
   password: string;
 
-  @ApiProperty({
-    example: 95.5,
-    description: 'Current weight in kg of the user',
-  })
-  @IsNumber()
-  currentWeight?: number;
-
   @ApiProperty({ example: 180, description: 'height in cm of the user' })
   @IsNumber()
   height?: number;
-
-  @ApiProperty({
-    example: 2,
-    description: 'Activity level of the user (1-3)',
-    minimum: 1,
-    maximum: 3,
-  })
-  @Min(1)
-  @Max(3)
-  @IsNumber()
-  currentActive?: number;
-
-  @ApiProperty({
-    example: '120/80',
-    description: 'blood pressure of the user',
-    required: false,
-  })
-  @IsString()
-  bloodPressure?: string;
-
-  @ApiProperty({ example: 75, description: 'weight goal of the user' })
-  @IsNumber()
-  weightGoal?: number;
 
   @ApiProperty({ example: 'MALE', description: 'Sex of the user' })
   @IsEnum(Gender)
@@ -75,19 +45,6 @@ export class CreateUserDto {
   })
   @IsDate()
   birthday?: Date;
-
-  @ApiProperty({
-    example: 22.5,
-    description: 'The BMI (Body Mass Index) of the user',
-  })
-  @IsOptional()
-  currentBmi?: number;
-
-  @IsOptional()
-  projectedBmi?: number;
-
-  @IsOptional()
-  currentWeeksToReachGoal?: number;
 
   @IsOptional()
   profileCompleted?: boolean;

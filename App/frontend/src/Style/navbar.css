@@ -33,6 +33,6 @@ nav ul li a:hover {
   color: #5ab5e5;
   background-color: white;
   transform: scale(1.1); /* Smooth grow effect */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Pop-out effect */
+  box-shadow: 0 4px 6px rgba(90, 180, 229, 0.3843137255); /* Pop-out effect */
   border-radius: 4px; /* Rounded corners */
 }/*# sourceMappingURL=navbar.css.map */

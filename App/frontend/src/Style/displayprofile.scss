@@ -4,22 +4,47 @@
     width: 90%;
     margin: 0 auto;
     height: auto;
-    
+  
     h1 {
-        font-size:4rem;
-        display: flex;
-        justify-content: flex-end;
-
+      font-size: 4rem;
+      display: flex;
+      justify-content: flex-end;
     }
-
-    .background{
-       // background-color: rgba(157, 163, 165, 0.192);
-        border: 0.1px solid $Blue;
+  
+    .section {
+      width: 70%;
+      margin: 0 auto;
+  
+      .background {
+        //border: 0.1px solid $Blue;
+        box-shadow: 10px 5px 5px $Blue;
         border-radius: 50px;
+        padding: 2rem;
+        margin: 1rem;
+        display: flex; /* Enable flexbox layout */
+        flex-wrap: wrap; /* Allow wrapping to the next row */
+  
+        #user {
+          width: 80%;
+          padding: 1rem;
+          flex: 0 0 80%; /* Fixed width of 80% */
+        }
+  
+        #weight {
+          width: 20%;
+          flex: 0 0 20%; /* Fixed width of 20% */
+        }
+  
+        #height {
+          width: 100%; /* Take the full width */
+          padding: 1rem;
+          flex: 0 0 100%; /* Move to the next row */
+        }
+      }
     }
-
+  
     p {
-        font-size: 1.3rem;
+      font-size: 1.3rem;
     }
-    
-}
+  }
+  
