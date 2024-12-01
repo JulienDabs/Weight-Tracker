@@ -3,7 +3,7 @@ import { PreferencesService } from './preferences.service';
 import { CreatePreferenceDto } from './dto/create-preference.dto';
 import { UpdatePreferenceDto } from './dto/update-preference.dto';
 
-@Controller('preferences')
+@Controller('gateway/preferences')
 export class PreferencesController {
   constructor(private readonly preferencesService: PreferencesService) {}
 

@@ -3,6 +3,7 @@ import { WeightService } from './weights.service';
 import { CreateWeightDto } from './dto/create-weight.dto';
 import { UpdateWeightDto } from './dto/update-weight.dto';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Controller('gateway/weight')
 export class WeightController {
@@ -17,7 +18,7 @@ export class WeightController {
   })
   async createWeight(
     @Param('userId') userId: string,
-    @Body() createWeightDto: CreateWeightDto,
+    @Body() createWeightDto: CreateWeightDto
   ) {
     return this.weightService.createWeight(userId, createWeightDto);
   }

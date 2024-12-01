@@ -38,7 +38,7 @@ export class AuthController {
   async login(
     @Body('email') email: string,
     @Body('password') password: string,
-    @Res() res: Response
+    @Res() res: Response,
   ) {
     return this.authService.signIn(email, password, res);
   }
@@ -47,12 +47,11 @@ export class AuthController {
   async verifyEmail(
     @Query('email') email: string,
     @Query('token') token: string,
-    @Res() Res: Response
+    @Res() Res: Response,
   ) {
     if (!email || !token) {
       throw new BadRequestException('Email and token are required');
     }
-   
 
     try {
       const result = await this.authService.verifyEmailToken(email, token, Res);
@@ -97,8 +96,8 @@ export class AuthController {
   @Post('resend-verif-email/:id')
   @ApiResponse({ status: 200, description: 'Verification email resent' })
   @ApiForbiddenResponse({ description: 'Invalid Email' })
-  async resentVerifEmail(@Param('id')  id: number ) {
-        await this.authService.resendVerifEmail(+id);
+  async resentVerifEmail(@Param('id') id: number) {
+    await this.authService.resendVerifEmail(+id);
     return { message: 'Verification email resent' };
   }
 

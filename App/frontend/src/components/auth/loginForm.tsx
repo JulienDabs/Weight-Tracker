@@ -7,6 +7,10 @@ import "../../Style/loginForm.css";
 import { useAuthState } from "./AuthStateContext";
 import Header from "../Header/header";
 
+
+// import dotenv from "dotenv";
+// dotenv.config();
+
 interface IFormInput {
   email: string;
   password: string;
@@ -31,6 +35,9 @@ const LoginForm: React.FC = () => {
     formState: { errors },
   } = useForm<IFormInput>();
 
+ 
+
+  
   const handleKey = () => {
     setStatus({
       success: false,
@@ -48,7 +55,8 @@ const LoginForm: React.FC = () => {
 
     setLoading(true);
     try {
-      await axios.post(`http://localhost:3000/auth/resend-verif-email/${id}`);
+     
+      await axios.post(`${import.meta.env.VITE_URL_AUTH}/resend-verif-email/${id}`);
       setStatus((prevState) => ({ ...prevState, resent: true }));
     } catch (error) {
       console.error("Failed to resend email", error);
@@ -66,16 +74,20 @@ const LoginForm: React.FC = () => {
     setLoading(true);
     try {
       const authResponse = await axios.post(
-        "http://localhost:3000/auth/login",
+        `${import.meta.env.VITE_URL_AUTH}/login`,
         data,
         { withCredentials: true }
       );
-      await checkAuthStatus();
 
+      if (authResponse.status === 200) {
+        
+        await checkAuthStatus();
+      }
+       
       const id = authResponse.data.user.id;
       setUserId(id);
 
-      const response = await axios.get(`http://localhost:3000/preferences/${id}`);
+      const response = await axios.get(`${import.meta.env.VITE_URL_PREF}/${id}`);
 
       if (response.data.isVerified) {
         setIsVerified(true);
@@ -153,7 +165,7 @@ const LoginForm: React.FC = () => {
           </button>
         </>
       )}
-      {loading && <p>Chargement...</p>}
+      {loading && <p className="warning">Chargement...</p>}
       {status.success && !isVerified && status.resent && (
         <p className="success">Email renvoyé, merci de vérifier votre boîte</p>
       )}
@@ -166,10 +178,10 @@ const LoginForm: React.FC = () => {
           </button>
         </>
       )}
-
-      <button onClick={() => navigate("/register")} className="registerButton">
+      {!isVerified && !profileCompleted && (<button onClick={() => navigate("/register")} className="registerButton">
         Création de compte
-      </button>
+      </button>)}
+      
     </>
   );
 };

@@ -29,7 +29,14 @@ const RegisterForm: React.FC = () => {
     control,
     name: "password",
   });
+  const urlAuth = import.meta.env.VITE_URL_AUTH;
 
+  const handleReset = () => {
+    setSuccess(false)
+    setUserExist(false)
+  };
+
+  console.log(urlAuth)
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     if (!isTcClicked) {
       alert("Veuillez accepter les Conditions Générales d'Utilisation.");
@@ -40,7 +47,7 @@ const RegisterForm: React.FC = () => {
       const { email, password } = data;
       setLoading(true);
 
-      const response = await axios.post("http://localhost:3000/auth/register", {
+      const response = await axios.post(`${urlAuth}/register`, {
         email,
         password,
       });
@@ -75,7 +82,7 @@ const RegisterForm: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label>Email</label>
-          <input
+          <input onKeyDown={handleReset}
             {...register("email", {
               required: "Email est requis",
               pattern: {

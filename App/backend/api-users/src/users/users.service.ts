@@ -10,6 +10,7 @@ import { PrismaService } from 'src/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { LoggingService } from 'src/common/services/logging.service';
 import axios from 'axios';
+import { ne, th } from '@faker-js/faker/.';
 
 @Injectable()
 export class UsersService {
@@ -31,7 +32,7 @@ export class UsersService {
       await this.prisma.preferences.create({
         data: {
           userId: user.id, // Link to the newly created user
-          tcComplied: false, // Default value (adjust as needed)
+          tcComplied: true, // Default value (adjust as needed)
           tcCompliedDate: new Date(), // Default or placeholder date
           isVerified: false, // Set isVerified in preferences
           profileCompleted: false, // Default value
@@ -50,10 +51,16 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    // console.log('findall clicked');
-    return this.prisma.users.findMany();
+  async findAll() {
+    try {
+      const users = await this.prisma.users.findMany();
+      return users;
+    } catch (error) {
+      console.error('Error finding all users:', error);
+      throw new Error('Could not fetch users'); // Optional: re-throwing or returning an error response
+    }
   }
+  
 
   async findOne(userId: number) {
     const user = await this.prisma.users.findUnique({
@@ -80,7 +87,7 @@ export class UsersService {
   }
 
   async update(userId: number, updateUserDto: UpdateUserDto) {
-    console.log('update clicked' + updateUserDto.height);
+     
 
     try {
       // Fetch the existing user data
@@ -111,9 +118,18 @@ export class UsersService {
         updateUserDto.birthday = new Date(updateUserDto.birthday);
       }
 
-      console.log('user' + updateUserDto.firstname);
+      console.log('user' + updateUserDto );
 
-      updateUserDto.profileCompleted = true;
+      //updateUserDto.profileCompleted = true;
+
+      await this.prisma.preferences.update({
+        where: {
+          userId: userId,
+        },
+        data: {
+          profileCompleted: true,
+        },
+      });
 
       const updatedUser = await this.prisma.users.update({
         where: {
@@ -136,6 +152,23 @@ export class UsersService {
  
   async remove(userId: number) {
     try {
+
+     const preferencesUserID =  await this.prisma.preferences.findFirst({
+        where: {
+          userId: userId,
+        },
+      })
+
+      if (!preferencesUserID) {
+        throw new NotFoundException(`Preferences for user with ID ${userId} not found`);
+      }
+
+      await this.prisma.preferences.delete({
+        where: {
+          id: preferencesUserID.id,
+        },
+      });
+
       await this.prisma.users.delete({
         where: {
           id: userId,

@@ -22,15 +22,15 @@ export class PreferencesService {
     return `This action returns all preferences`;
   }
 
- async findOne(id: number) {
+ async findOne(userId: number) {
     try {
       const userPref = await this.prisma.preferences.findUnique({
         where: {
-          id: id,
+          userId: userId,
         },
       });
       if (!userPref) {
-        throw new Error(`User with ID ${id} not found`);
+        throw new Error(`User with ID ${userId} not found`);
       }
       return userPref;
     } catch (error) {

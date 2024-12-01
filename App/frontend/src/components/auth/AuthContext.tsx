@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 // Define the shape of the user object
 interface User {
@@ -32,15 +31,16 @@ interface AuthProviderProps {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  //const navigate = useNavigate(); 
+  //const navigate = useNavigate();
 
   // Function to check if the user is authenticated
   const checkAuthStatus = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/auth/verify-session",
+        `${import.meta.env.VITE_URL_AUTH}/verify-session`,
         { withCredentials: true }
       );
+
       if (response.data.isAuthenticated) {
         setIsAuthenticated(true);
         setUser(response.data.user);
@@ -58,7 +58,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       await axios.post(
-        "http://localhost:3000/auth/logout",
+        `${import.meta.env.VITE_URL_AUTH}/logout`,
         {},
         { withCredentials: true }
       );

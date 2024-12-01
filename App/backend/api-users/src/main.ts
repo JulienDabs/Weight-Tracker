@@ -17,7 +17,7 @@ async function bootstrap() {
     origin: 'http://localhost:5173', // Replace with your frontend URL
     credentials: true, // Allow credentials (cookies)
   });
-
+  app.use(cookieParser());
   const config = new DocumentBuilder()
     .setTitle('User API')
     .setDescription('Creating users and manage their informations')
@@ -29,7 +29,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document);
 
-  app.use(cookieParser());
+ 
 
   await app.listen(3000);
   logger.log(`Application is running on: ${await app.getUrl()}`);

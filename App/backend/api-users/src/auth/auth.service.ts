@@ -111,7 +111,9 @@ export class AuthService {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedException({ message: 'Invalid password' });
+      res.status(401).json({
+        message: 'Invalid credentials',
+      });
     }
 
     const secretKey = process.env.JWT_SECRET_KEY;
@@ -129,6 +131,8 @@ export class AuthService {
       sameSite: 'strict', // Prevent CSRF attacks
       maxAge: 3600000, // 1 hour in milliseconds
     });
+
+     
 
     res
       .status(200)
@@ -231,6 +235,7 @@ export class AuthService {
 
   async verifySession(req: Request, res: Response) {
     try {
+      
       const cookies = (req as any).cookies; // Correct type assertion
       const token = cookies['token'];
       if (!token) {

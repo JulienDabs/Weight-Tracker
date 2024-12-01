@@ -21,7 +21,7 @@ model Users {
 
 model Preferences {
   id               Int      @id @default(autoincrement())
-  userId           Int
+  userId           Int      @unique
   tcComplied       Boolean
   tcCompliedDate   DateTime
   isVerified       Boolean? @default(false)
